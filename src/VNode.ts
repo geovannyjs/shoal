@@ -1,3 +1,6 @@
+import { Component } from './Component'
+
+
 enum Type {
   Component = 0,
   Element,
@@ -8,7 +11,7 @@ enum Type {
 
 type VNode = {
   type: Type
-  item?: string | Function | undefined
+  item?: Component | string
   key?: string | number
   attrs?: Object
   children: Array<VNode>
