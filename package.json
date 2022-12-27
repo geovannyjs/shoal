@@ -11,5 +11,8 @@
   "bugs": {
     "url": "https://github.com/geovannyjs/shoal/issues"
   },
-  "homepage": "https://github.com/geovannyjs/shoal#readme"
+  "homepage": "https://github.com/geovannyjs/shoal#readme",
+  "devDependencies": {
+    "typescript": "4.8.4"
+  }
 }
