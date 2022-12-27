@@ -1,4 +1,5 @@
-declare enum VNodeItem {
+import { Component } from './Component';
+declare enum Type {
     Component = 0,
     Fragment = 1,
     HTML = 2,
@@ -6,8 +7,11 @@ declare enum VNodeItem {
     Text = 4
 }
 declare type VNode = {
-    item: VNodeItem;
-    key: string | number | undefined;
-    attrs: Object;
-    children: Array<VNode> | VNode | string | number;
+    __SVN__: boolean;
+    type: Type;
+    item?: Component | string;
+    key?: string | number;
+    attrs?: Object;
+    children: Array<VNode>;
 };
+export { VNode, Type };

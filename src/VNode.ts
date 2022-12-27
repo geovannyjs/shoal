@@ -3,13 +3,14 @@ import { Component } from './Component'
 
 enum Type {
   Component = 0,
-  Element,
   Fragment,
+  HTML,
   Tag,
   Text
 }
 
 type VNode = {
+  __SVN__: boolean
   type: Type
   item?: Component | string
   key?: string | number

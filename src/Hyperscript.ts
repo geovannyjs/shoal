@@ -1,9 +1,11 @@
 import { VNode, Type as VNodeType } from './VNode'
+import { Component } from './Component'
 
 
-const h = (select: string): VNode => {
+const hyperscript = (item: Component | string, ...args): VNode => {
 
   return {
+    __SVN__: true,
     type: VNodeType.Tag,
     item: 'div',
     children: []
@@ -11,6 +13,18 @@ const h = (select: string): VNode => {
 
 }
 
+const trust = (html: string = ""): VNode => {
+
+  return {
+    __SVN__: true,
+    type: VNodeType.HTML,
+    item: html,
+    children: []
+  }
+
+}
+
 export {
-  h
+  hyperscript,
+  trust
 }
