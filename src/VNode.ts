@@ -1,14 +1,20 @@
-enum VNodeItem {
+enum Type {
   Component = 0,
+  Element,
   Fragment,
-  HTML,
   Tag,
   Text
 }
 
 type VNode = {
-  item: VNodeItem
-  key: string | number | undefined
-  attrs: Object
-  children: Array<VNode> | VNode | string | number
+  type: Type
+  item?: string | Function | undefined
+  key?: string | number
+  attrs?: Object
+  children: Array<VNode>
+}
+
+export {
+  VNode,
+  Type
 }
