@@ -2,7 +2,7 @@ import { VNode, Type as VNodeType } from './VNode'
 import { Component } from './Component'
 
 
-const hyperscript = (item: Component | string, ...args): VNode => {
+const hyperscript = (item: Component | string, ...args: Array<any>): VNode => {
 
   return {
     __SVN__: true,
@@ -17,7 +17,7 @@ const trust = (html: string = ""): VNode => {
 
   return {
     __SVN__: true,
-    type: VNodeType.HTML,
+    type: VNodeType.Raw,
     item: html,
     children: []
   }

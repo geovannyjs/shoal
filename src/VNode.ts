@@ -4,7 +4,7 @@ import { Component } from './Component'
 enum Type {
   Component = 0,
   Fragment,
-  HTML,
+  Raw,
   Tag,
   Text
 }
