@@ -2,13 +2,13 @@ import { VNode, Type as VNodeType } from './VNode'
 import { Component } from './Component'
 
 
-const hyperscript = (item: Component | string, ...args: Array<any>): VNode => {
+const hyperscript = (item: Component | string, ...children: Array<any>): VNode => {
 
   return {
     __SVN__: true,
-    type: VNodeType.Tag,
-    item: 'div',
-    children: []
+    type: typeof item === 'function' ? VNodeType.Component : VNodeType.Tag,
+    item,
+    children
   }
 
 }
