@@ -8,9 +8,9 @@ type Attrs = {
 type ComponentLifeCycleMethods = {
   beforeRemove: () => any
   beforeUpdate: () => any
-  ready: () => any
-  remove: () => any
-  update: () => any
+  created: () => any
+  removed: () => any
+  updated: () => any
 }
 
 type ComponentViewMethod = {
