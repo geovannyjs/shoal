@@ -10,15 +10,20 @@ enum Type {
 }
 
 type VNode = {
-  __SVN__: boolean
+  __shoalVNode__: boolean
   type: Type
-  item?: Component | string
+  item: Component | string
   key?: string | number
-  attrs?: Object
+  attrs: Object
   children: Array<VNode>
 }
 
+const normalize = (): VNode => {}
+
+const normalizeChildren = (): Array<VNode> => {}
+
 export {
-  VNode,
-  Type
+  normalizeChildren,
+  Type,
+  VNode
 }

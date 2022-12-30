@@ -5,9 +5,9 @@ declare type Attrs = {
 declare type ComponentLifeCycleMethods = {
     beforeRemove: () => any;
     beforeUpdate: () => any;
-    ready: () => any;
-    remove: () => any;
-    update: () => any;
+    created: () => any;
+    removed: () => any;
+    updated: () => any;
 };
 declare type ComponentViewMethod = {
     view: () => VNode;
