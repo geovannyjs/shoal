@@ -24,7 +24,9 @@ const normalize = (node: any): VNode => {
   return { __shoalVNode__: true, type: Type.Text, item: String(node), attrs: {}, children: [] }
 }
 
-const normalizeChildren = (nodes: Array<any>): Array<VNode> => {}
+const normalizeChildren = (nodes: Array<any>): Array<VNode> => {
+  return nodes.map(normalize)
+}
 
 export {
   normalizeChildren,
