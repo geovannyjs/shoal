@@ -6,6 +6,18 @@ import {
 import { Component } from './Component'
 
 
+const fragments = (...nodes: Array<any>): VNode => {
+
+  return {
+    __shoalVNode__: true,
+    type: VNodeType.Raw,
+    item: '',
+    attrs: {},
+    children: normalizeChildren(nodes)
+  }
+
+}
+
 const hyperscript = (item: Component | string, ...args: Array<any>): VNode => {
 
   // if the second param is an attrs object
@@ -34,6 +46,7 @@ const trust = (html: string = ""): VNode => {
 }
 
 export {
+  fragments,
   hyperscript,
   trust
 }

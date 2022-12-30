@@ -18,9 +18,9 @@ type VNode = {
   children: Array<VNode>
 }
 
-const normalize = (): VNode => {}
+const normalize = (node: any): VNode => {}
 
-const normalizeChildren = (): Array<VNode> => {}
+const normalizeChildren = (nodes: Array<any>): Array<VNode> => {}
 
 export {
   normalizeChildren,

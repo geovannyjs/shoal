@@ -14,5 +14,5 @@ declare type VNode = {
     attrs: Object;
     children: Array<VNode>;
 };
-declare const normalizeChildren: () => Array<VNode>;
+declare const normalizeChildren: (nodes: Array<any>) => Array<VNode>;
 export { normalizeChildren, Type, VNode };
