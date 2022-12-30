@@ -18,7 +18,11 @@ type VNode = {
   children: Array<VNode>
 }
 
-const normalize = (node: any): VNode => {}
+const normalize = (node: any): VNode => {
+  if(Array.isArray(node)) return { __shoalVNode__: true, type: Type.Fragment, item: '', attrs: {}, children: normalizeChildren(node) }
+  if(node.__shoalVNode__) return node
+  return { __shoalVNode__: true, type: Type.Text, item: String(node), attrs: {}, children: [] }
+}
 
 const normalizeChildren = (nodes: Array<any>): Array<VNode> => {}
 

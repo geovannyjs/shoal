@@ -10,7 +10,7 @@ const fragments = (...nodes: Array<any>): VNode => {
 
   return {
     __shoalVNode__: true,
-    type: VNodeType.Raw,
+    type: VNodeType.Fragment,
     item: '',
     attrs: {},
     children: normalizeChildren(nodes)
