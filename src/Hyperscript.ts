@@ -18,7 +18,7 @@ const fragments = (...nodes: Array<any>): VNode => {
 
 }
 
-const hyperscript = (item: Component | string, ...args: Array<any>): VNode => {
+const hyperscript = (item: Component<any> | string, ...args: Array<any>): VNode => {
 
   // if the second param is an attrs object
   let [attrs, children] = typeof args[0] === 'object' && !args[0].__shoalVNode__ && !Array.isArray(args[0]) ? [args[0], args.slice(1)] : [{}, args]

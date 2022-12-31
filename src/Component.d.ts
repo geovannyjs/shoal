@@ -1,16 +1,16 @@
 import { VNode } from './VNode';
-declare type Attrs = {
+declare type Attrs<T> = {
     class?: string;
-} & Object;
+} & T;
 declare type ComponentLifeCycleMethods = {
-    beforeRemove: () => any;
-    beforeUpdate: () => any;
-    created: () => any;
-    removed: () => any;
-    updated: () => any;
+    beforeRemove?: () => any;
+    beforeUpdate?: () => any;
+    ready?: () => any;
+    remove?: () => any;
+    update?: () => any;
 };
 declare type ComponentViewMethod = {
     view: () => VNode;
 };
-declare type Component = (attrs: Attrs) => ComponentLifeCycleMethods & ComponentViewMethod;
+declare type Component<T> = (attrs: Attrs<T>) => ComponentLifeCycleMethods & ComponentViewMethod;
 export { Attrs, Component, ComponentLifeCycleMethods, ComponentViewMethod };
