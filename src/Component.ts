@@ -1,9 +1,7 @@
 import { VNode } from './VNode'
 
 
-type Attrs<T extends object> = {
-  class?: string
-} & T
+type Attrs<T extends object> = T
 
 type ComponentLifeCycleMethods = {
   beforeRemove?: () => any
@@ -17,7 +15,7 @@ type ComponentViewMethod = {
   view: () => VNode
 }
 
-type Component<T extends Object> = (attrs: Attrs<T>) => ComponentLifeCycleMethods & ComponentViewMethod
+type Component<T extends object> = (attrs: Attrs<T>) => ComponentLifeCycleMethods & ComponentViewMethod
 
 export {
   Attrs,
