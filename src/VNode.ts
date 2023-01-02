@@ -19,8 +19,8 @@ type VNode = {
 }
 
 const normalize = (node: any): VNode => {
-  if(Array.isArray(node)) return { __sv__: true, type: Type.Fragment, item: '', attrs: {}, children: normalizeChildren(node) }
   if(node.__sv__) return node
+  if(Array.isArray(node)) return { __sv__: true, type: Type.Fragment, item: '', attrs: {}, children: normalizeChildren(node) }
   return { __sv__: true, type: Type.Text, item: String(node), attrs: {}, children: [] }
 }
 
