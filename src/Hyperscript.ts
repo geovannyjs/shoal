@@ -9,7 +9,7 @@ import { Component } from './Component'
 const fragments = (...nodes: Array<any>): VNode => {
 
   return {
-    __shoalVNode__: true,
+    __sv__: true,
     type: VNodeType.Fragment,
     item: '',
     attrs: {},
@@ -21,10 +21,10 @@ const fragments = (...nodes: Array<any>): VNode => {
 const hyperscript = (item: Component<any> | string, ...args: Array<any>): VNode => {
 
   // if the second param is an attrs object
-  let [attrs, children] = typeof args[0] === 'object' && !args[0].__shoalVNode__ && !Array.isArray(args[0]) ? [args[0], args.slice(1)] : [{}, args]
+  let [attrs, children] = typeof args[0] === 'object' && !args[0].__sv__ && !Array.isArray(args[0]) ? [args[0], args.slice(1)] : [{}, args]
 
   return {
-    __shoalVNode__: true,
+    __sv__: true,
     type: typeof item === 'function' ? VNodeType.Component : VNodeType.Tag,
     item,
     attrs,
@@ -36,7 +36,7 @@ const hyperscript = (item: Component<any> | string, ...args: Array<any>): VNode 
 const trust = (html: string = ""): VNode => {
 
   return {
-    __shoalVNode__: true,
+    __sv__: true,
     type: VNodeType.Raw,
     item: html,
     attrs: {},

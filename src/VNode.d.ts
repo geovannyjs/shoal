@@ -7,7 +7,7 @@ declare enum Type {
     Text = 4
 }
 declare type VNode = {
-    __shoalVNode__: boolean;
+    __sv__: boolean;
     type: Type;
     item: Component<any> | string;
     key?: string | number;
