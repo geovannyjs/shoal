@@ -35,17 +35,15 @@ const updateNodes = (parent: HTMLElementVNodes, old: Array<VNode>, cur: Array<VN
 
 const render = (root: HTMLElement, component: Component<any>) => {
 
-  const dom: HTMLElementVNodes = <HTMLElementVNodes>root
-
   // First time rendering into a node clears it out
-  if (dom.vnodes == null) {
-    dom.vnodes = []
-    dom.textContent = ''
+  if ((<HTMLElementVNodes>root).vnodes == null) {
+    ;(<HTMLElementVNodes>root).vnodes = []
+    root.textContent = ''
   }
 
   const cur: Array<VNode> = [h(component)]
-  updateNodes(dom, dom.vnodes, cur)
-  dom.vnodes = cur
+  updateNodes(<HTMLElementVNodes>root, (<HTMLElementVNodes>root).vnodes, cur)
+  ;(<HTMLElementVNodes>root).vnodes = cur
 
 }
 
