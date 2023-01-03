@@ -1,2 +1,3 @@
 import { fragments, hyperscript, trust } from './Hyperscript';
-export { fragments, hyperscript, trust };
+import { render } from './Render';
+export { fragments, hyperscript, render, trust };
