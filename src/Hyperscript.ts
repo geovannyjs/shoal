@@ -22,7 +22,7 @@ const hyperscript = (item: Component<any> | string, ...args: Array<any>): VNode 
   return {
     __sv__: true,
     type: typeof item === 'function' ? VNodeType.Component : VNodeType.Tag,
-    item,
+    item: typeof item === 'function' ? item(attrs) : item,
     attrs,
     children: normalizeChildren(children)
   }

@@ -15,11 +15,14 @@ type ComponentViewMethod = {
   view: () => VNode
 }
 
-type Component<T extends object> = (attrs: Attrs<T>) => ComponentLifeCycleMethods & ComponentViewMethod
+type ComponentReturn = ComponentLifeCycleMethods & ComponentViewMethod
+
+type Component<T extends object> = (attrs: Attrs<T>) => ComponentReturn
 
 export {
   Attrs,
   Component,
   ComponentLifeCycleMethods,
+  ComponentReturn,
   ComponentViewMethod
 }

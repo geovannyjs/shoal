@@ -10,5 +10,6 @@ declare type ComponentLifeCycleMethods = {
 declare type ComponentViewMethod = {
     view: () => VNode;
 };
-declare type Component<T extends object> = (attrs: Attrs<T>) => ComponentLifeCycleMethods & ComponentViewMethod;
-export { Attrs, Component, ComponentLifeCycleMethods, ComponentViewMethod };
+declare type ComponentReturn = ComponentLifeCycleMethods & ComponentViewMethod;
+declare type Component<T extends object> = (attrs: Attrs<T>) => ComponentReturn;
+export { Attrs, Component, ComponentLifeCycleMethods, ComponentReturn, ComponentViewMethod };
