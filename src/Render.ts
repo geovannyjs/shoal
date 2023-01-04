@@ -1,5 +1,4 @@
-import { Component, ComponentReturn } from './Component'
-import { hyperscript as h } from './Hyperscript'
+import { ComponentReturn } from './Component'
 import { VNode, Type as VNodeType } from './VNode'
 
 
@@ -45,7 +44,7 @@ const updateNodes = (parent: HTMLElementVNodes, old: Array<VNode>, cur: Array<VN
 
 const insertDOM = (parent: HTMLElement, dom: Node): void => { parent.appendChild(dom) }
 
-const render = (root: HTMLElement, component: Component<any>) => {
+const render = (root: HTMLElement, vnode: VNode) => {
 
   // First time rendering into a node clears it out
   if ((<HTMLElementVNodes>root).vnodes == null) {
@@ -53,7 +52,7 @@ const render = (root: HTMLElement, component: Component<any>) => {
     root.textContent = ''
   }
 
-  const cur: Array<VNode> = [h(component)]
+  const cur: Array<VNode> = [vnode]
   updateNodes(<HTMLElementVNodes>root, (<HTMLElementVNodes>root).vnodes, cur)
   ;(<HTMLElementVNodes>root).vnodes = cur
 

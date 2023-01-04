@@ -1,3 +1,3 @@
-import { Component } from './Component';
-declare const render: (root: HTMLElement, component: Component<any>) => void;
+import { VNode } from './VNode';
+declare const render: (root: HTMLElement, vnode: VNode) => void;
 export { render };
