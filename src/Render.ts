@@ -1,4 +1,4 @@
-import { Component } from './Component'
+import { Component, ComponentReturn } from './Component'
 import { hyperscript as h } from './Hyperscript'
 import { VNode, Type as VNodeType } from './VNode'
 
@@ -22,7 +22,10 @@ const createNode = (parent: HTMLElementVNodes, vnode: VNode):void => {
   dispatcher[vnode.type](parent, vnode)
 }
 
-const createNodeComponent = (parent: HTMLElementVNodes, vnode: VNode):void => {}
+const createNodeComponent = (parent: HTMLElementVNodes, vnode: VNode):void => {
+  const componentViewVNode = (<ComponentReturn>vnode.item).view({ attrs: vnode.attrs, children: vnode.children })
+  createNode(parent, componentViewVNode)
+}
 
 const createNodeFragment = (parent: HTMLElementVNodes, vnode: VNode):void => {}
 
