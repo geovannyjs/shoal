@@ -1,11 +1,11 @@
 import { VNode } from './VNode';
 declare type Attrs<T extends object> = T;
 declare type ComponentLifeCycleMethods = {
-    beforeRemove?: () => any;
-    beforeUpdate?: () => any;
-    ready?: () => any;
-    remove?: () => any;
-    update?: () => any;
+    afterCreate?: () => any;
+    afterRemove?: () => any;
+    afterUpdate?: () => any;
+    beforeRemove?: () => boolean;
+    beforeUpdate?: () => boolean;
 };
 declare type ComponentViewMethod = {
     view: () => VNode;

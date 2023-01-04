@@ -4,11 +4,11 @@ import { VNode } from './VNode'
 type Attrs<T extends object> = T
 
 type ComponentLifeCycleMethods = {
-  beforeRemove?: () => any
-  beforeUpdate?: () => any
-  ready?: () => any
-  remove?: () => any
-  update?: () => any
+  afterCreate?: () => any
+  afterRemove?: () => any
+  afterUpdate?: () => any
+  beforeRemove?: () => boolean
+  beforeUpdate?: () => boolean
 }
 
 type ComponentViewMethod = {
