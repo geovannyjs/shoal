@@ -32,7 +32,11 @@ const createNodeFragment = (parent: Node, vnode: VNode):void => {
 
 const createNodeRaw = (parent: Node, vnode: VNode):void => {}
 
-const createNodeTag = (parent: Node, vnode: VNode):void => {}
+const createNodeTag = (parent: Node, vnode: VNode):void => {
+  vnode.dom = $doc.createElement(<string>vnode.item)
+  insertDOM(parent, vnode.dom)
+  createNodes(vnode.dom, vnode.children)
+}
 
 const createNodeText = (parent: Node, vnode: VNode):void => {
   vnode.dom = $doc.createTextNode(<string>vnode.item)
