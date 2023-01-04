@@ -8,7 +8,10 @@ declare type ComponentLifeCycleMethods = {
     beforeUpdate?: () => boolean;
 };
 declare type ComponentViewMethod = {
-    view: () => VNode;
+    view: ({ attrs, children }: {
+        attrs: object;
+        children: Array<VNode>;
+    }) => VNode;
 };
 declare type ComponentReturn = ComponentLifeCycleMethods & ComponentViewMethod;
 declare type Component<T extends object> = (attrs: Attrs<T>) => ComponentReturn;

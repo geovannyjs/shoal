@@ -13,7 +13,7 @@ type VNode = {
   __sv__: boolean
   type: Type
   item: ComponentReturn | string
-  key?: string | number
+  key?: string
   attrs: Object
   children: Array<VNode>
   dom?: Node

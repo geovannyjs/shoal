@@ -24,6 +24,7 @@ const hyperscript = (item: Component<any> | string, ...args: Array<any>): VNode 
     type: typeof item === 'function' ? VNodeType.Component : VNodeType.Tag,
     item: typeof item === 'function' ? item(attrs) : item,
     attrs,
+    key: attrs.key ? attrs.key : null,
     children: normalizeChildren(children)
   }
 
