@@ -13,6 +13,7 @@ declare type VNode = {
     key?: string | number;
     attrs: Object;
     children: Array<VNode>;
+    dom?: Node;
 };
 declare const normalizeChildren: (nodes: Array<any>) => Array<VNode>;
 export { normalizeChildren, Type, VNode };

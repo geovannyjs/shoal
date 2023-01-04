@@ -16,6 +16,7 @@ type VNode = {
   key?: string | number
   attrs: Object
   children: Array<VNode>
+  dom?: Node
 }
 
 const normalize = (node: any): VNode => {
