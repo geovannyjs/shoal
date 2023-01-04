@@ -3,7 +3,7 @@ import {
   Type as VNodeType,
   VNode
 } from './VNode'
-import { Component } from './Component'
+import { Component, ComponentReturn } from './Component'
 
 
 const fragments = (...nodes: Array<any>): VNode => ({
@@ -17,15 +17,17 @@ const fragments = (...nodes: Array<any>): VNode => ({
 const hyperscript = (item: Component<any> | string, ...args: Array<any>): VNode => {
 
   // if the second param is an attrs object
-  let [attrs, children] = typeof args[0] === 'object' && !args[0].__sv__ && !Array.isArray(args[0]) ? [args[0], args.slice(1)] : [{}, args]
+  const [attrs, children] = typeof args[0] === 'object' && !args[0].__sv__ && !Array.isArray(args[0]) ? [args[0], args.slice(1)] : [{}, args]
+  const isComponent = typeof item === 'function'
+  const evaluatedItem = isComponent ? item(attrs) : item
 
   return {
     __sv__: true,
-    type: typeof item === 'function' ? VNodeType.Component : VNodeType.Tag,
-    item: typeof item === 'function' ? item(attrs) : item,
+    type: isComponent ? VNodeType.Component : VNodeType.Tag,
+    item: evaluatedItem,
     attrs,
     key: attrs.key ? attrs.key : null,
-    children: normalizeChildren(children)
+    children: isComponent ? [(<ComponentReturn>evaluatedItem).view({ attrs, children })] : normalizeChildren(children)
   }
 
 }

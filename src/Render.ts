@@ -22,8 +22,7 @@ const createNode = (parent: HTMLElementVNodes, vnode: VNode):void => {
 }
 
 const createNodeComponent = (parent: HTMLElementVNodes, vnode: VNode):void => {
-  const componentViewVNode = (<ComponentReturn>vnode.item).view({ attrs: vnode.attrs, children: vnode.children })
-  createNode(parent, componentViewVNode)
+  createNode(parent, vnode.children[0])
 }
 
 const createNodeFragment = (parent: HTMLElementVNodes, vnode: VNode):void => {}
