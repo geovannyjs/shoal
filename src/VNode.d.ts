@@ -11,7 +11,7 @@ declare type VNode = {
     type: Type;
     item: ComponentReturn | string;
     key?: string;
-    attrs: Object;
+    attrs: object;
     children: Array<VNode>;
     dom?: Node;
 };
