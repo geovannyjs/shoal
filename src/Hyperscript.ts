@@ -27,7 +27,6 @@ const h = (item: Component<any> | string, ...args: Array<any>): VNode => {
     type: isComponent ? VNodeType.Component : VNodeType.Tag,
     item: evaluatedItem,
     attrs,
-    key: attrs.key ? String(attrs.key) : undefined,
     children: isComponent ? [(<ComponentReturn>evaluatedItem).view({ attrs, children })] : normalizeChildren(children)
   })
 
