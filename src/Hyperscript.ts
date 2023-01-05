@@ -15,7 +15,7 @@ const fragments = (...nodes: Array<any>): VNode => pure({
   children: normalizeChildren(nodes)
 })
 
-const hyperscript = (item: Component<any> | string, ...args: Array<any>): VNode => {
+const h = (item: Component<any> | string, ...args: Array<any>): VNode => {
 
   // if the second param is an attrs object
   const [attrs, children] = typeof args[0] === 'object' && !args[0].__sv__ && !Array.isArray(args[0]) ? [args[0], args.slice(1)] : [pure(), args]
@@ -43,6 +43,6 @@ const trust = (html: string = ''): VNode => pure({
 
 export {
   fragments,
-  hyperscript,
+  h,
   trust
 }
