@@ -26,9 +26,7 @@ const normalize = (node: any): VNode => {
   return pure({ __sv__: true, type: Type.Text, item: String(node), attrs: pure(), children: [] })
 }
 
-const normalizeChildren = (nodes: Array<any>): Array<VNode> => {
-  return nodes.map(normalize)
-}
+const normalizeChildren = (nodes: Array<any>): Array<VNode> => nodes.map(normalize)
 
 export {
   normalizeChildren,
