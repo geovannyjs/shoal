@@ -34,6 +34,10 @@ const createNodeRaw = (parent: Node, vnode: VNode):void => {}
 
 const createNodeTag = (parent: Node, vnode: VNode):void => {
   vnode.dom = $doc.createElement(<string>vnode.item)
+
+  // set attrs
+  Object.entries(vnode.attrs).forEach(([k, v]) => (<HTMLElement>vnode.dom).setAttribute(k, v))
+
   insertDOM(parent, vnode.dom)
   createNodes(vnode.dom, vnode.children)
 }
