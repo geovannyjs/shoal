@@ -1,12 +1,13 @@
 import { VNode, Type as VNodeType } from './VNode'
 
 
-type NodeVNodes = Node & { vnodes: Array<VNode> }
+type NodeVNode = Node & { vnode?: VNode }
 
 // FIXME it would be good to accept document as a param
 // so it would be possible to use something like jsdom
 const $doc: Document = window.document
 
+/*
 const createNodes = (parent: Node, cur: Array<VNode>):void => cur.forEach(vnode => vnode && createNode(parent, vnode))
 
 const createNode = (parent: Node, vnode: VNode):void => {
@@ -53,18 +54,60 @@ const updateNodes = (parent: Node, old: Array<VNode>, cur: Array<VNode>): void =
 }
 
 const insertDOM = (parent: Node, dom: Node): void => { parent.appendChild(dom) }
+*/
+
+const buildNode = (vnode: VNode):Node => {
+  const dispatcher = {
+    [VNodeType.Component]: buildNodeComponent,
+    [VNodeType.Fragment]: buildNodeFragment,
+    [VNodeType.Raw]: buildNodeRaw,
+    [VNodeType.Tag]: buildNodeTag,
+    [VNodeType.Text]: buildNodeText
+  }
+  return dispatcher[vnode.type](vnode)
+}
+
+const buildNodeComponent = (vnode: VNode):Node => {
+  return buildNode(vnode.children[0])
+}
+
+const buildNodeFragment = (vnode: VNode):Node => {
+  const fragment = $doc.createDocumentFragment()
+  vnode.children.forEach(vn => fragment.appendChild(buildNode(vn)))
+  return fragment
+}
+
+const buildNodeRaw = (vnode: VNode):Node => {
+  return $doc.createDocumentFragment()
+}
+
+const buildNodeTag = (vnode: VNode):Node => {
+  vnode.dom = $doc.createElement(<string>vnode.item)
+
+  // set attrs
+  Object.entries(vnode.attrs).forEach(([k, v]) => (<HTMLElement>vnode.dom).setAttribute(k, v))
+
+  // children
+  vnode.children.forEach(vn => vnode.dom?.appendChild(buildNode(vn)))
+
+  return vnode.dom
+}
+
+const buildNodeText = (vnode: VNode):Node => {
+  vnode.dom = $doc.createTextNode(<string>vnode.item)
+  return vnode.dom
+}
 
 const render = (root: Node, vnode: VNode) => {
 
-  // First time rendering into a node clears it out
-  if ((<NodeVNodes>root).vnodes == null) {
-    ;(<NodeVNodes>root).vnodes = []
+  // first time rendering
+  if ((<NodeVNode>root).vnode == undefined) {
     root.textContent = ''
+    root.appendChild(buildNode(vnode))
   }
 
-  const cur: Array<VNode> = [vnode]
-  updateNodes(root, (<NodeVNodes>root).vnodes, cur)
-  ;(<NodeVNodes>root).vnodes = cur
+  //updateNodes(root, (<NodeVNode>root).vnode, cur)
+  ;(<NodeVNode>root).vnode = vnode
 
 }
 
