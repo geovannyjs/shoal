@@ -79,7 +79,8 @@ const diff = (old?: VNode, cur?: VNode, parent?: Node):void => {
 
     // Text
     if(old.type === VNodeType.Text && cur.type === VNodeType.Text) {
-      (<Element>old.dom).replaceWith(buildNodeText(cur))
+      ;(<Element>old.dom).textContent = <string>cur.item
+      cur.dom = old.dom
     }
 
   }
