@@ -63,12 +63,18 @@ const diff = (old?: VNode, cur?: VNode, parent?: Node):void => {
 
     // Component
     if(old.type === VNodeType.Component && cur.type === VNodeType.Component) {
-      for(let i=0;i<old.children.length;i++) diff(old.children[i], cur.children[i])
+      for(let i=0; i < old.children.length; i++) diff(old.children[i], cur.children[i])
     }
 
     // Fragment
     if(old.type === VNodeType.Fragment && cur.type === VNodeType.Fragment) {
-      for(let i=0;i<old.children.length;i++) diff(old.children[i], cur.children[i])
+      for(let i=0; i < old.children.length; i++) diff(old.children[i], cur.children[i])
+    }
+
+    // Tag
+    if(old.type === VNodeType.Tag && cur.type === VNodeType.Tag) {
+      //(<Element>old.dom).replaceWith(buildNodeText(cur))
+      for(let i=0; i < old.children.length; i++) diff(old.children[i], cur.children[i])
     }
 
     // Text
