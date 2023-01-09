@@ -1,3 +1,5 @@
+import { Component } from './Component'
+import { h } from './Hyperscript'
 import { VNode, Type as VNodeType } from './VNode'
 
 
@@ -97,7 +99,9 @@ const diff = (old?: VNode, cur?: VNode, parent?: Node): void => {
 
 const rAF = typeof requestAnimationFrame === 'undefined' ? (fn: Function) => fn() : requestAnimationFrame
 
-const mount = (root: Element) => (vNodeProvider: () => VNode): Renderer => {
+const mount = (root: Element) => (component: Component<any>): Renderer => {
+
+  const vnode = h(component)
 
   const rAFCaller = (fn: () => VNode) => !(<ElementContainer>root).queued && rAF(() => {
     ;(<ElementContainer>root).queued = true
@@ -108,7 +112,6 @@ const mount = (root: Element) => (vNodeProvider: () => VNode): Renderer => {
 
   // first drawn
   rAFCaller(() => {
-    const vnode = vNodeProvider()
     root.textContent = ''
     root.appendChild(buildNode(vnode))
     return vnode
@@ -116,7 +119,7 @@ const mount = (root: Element) => (vNodeProvider: () => VNode): Renderer => {
 
   return () => {
     rAFCaller(() => { 
-      const vnode = vNodeProvider()
+      const vnode = h(component)
       diff((<ElementContainer>root).vnode, vnode)
       return vnode
     })
