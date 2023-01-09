@@ -41,7 +41,10 @@ const buildNodeTag = (vnode: VNode): Node => {
   vnode.dom = $doc.createElement(<string>vnode.item)
 
   // set attrs
-  Object.entries(vnode.attrs).forEach(([k, v]) => (<HTMLElement>vnode.dom).setAttribute(k, v))
+  Object.entries(vnode.attrs).forEach(([k, v]) => { 
+    if (k.slice(0, 2) === 'on') (<HTMLElement>vnode.dom).addEventListener(k.slice(2), v)
+    else (<HTMLElement>vnode.dom).setAttribute(k, v) 
+  })
 
   // children
   vnode.children.forEach(vn => vnode.dom?.appendChild(buildNode(vn)))
