@@ -1,7 +1,7 @@
 import { VNode, Type as VNodeType } from './VNode'
 
 
-type NodeVNode = Node & {
+type ElementContainer = Element & {
   queued: boolean
   vnode?: VNode 
 }
@@ -90,25 +90,25 @@ const diff = (old?: VNode, cur?: VNode, parent?: Node):void => {
 
 }
 
-const render = (root: Node, vnode: VNode) => {
+const render = (root: Element, vnode: VNode) => {
 
   // first time rendering
-  if ((<NodeVNode>root).vnode == undefined) {
-    !(<NodeVNode>root).queued && requestAnimationFrame(() => {
-      ;(<NodeVNode>root).queued = true
+  if ((<ElementContainer>root).vnode == undefined) {
+    !(<ElementContainer>root).queued && requestAnimationFrame(() => {
+      ;(<ElementContainer>root).queued = true
       root.textContent = ''
       root.appendChild(buildNode(vnode))
-      ;(<NodeVNode>root).vnode = vnode
-      ;(<NodeVNode>root).queued = false
+      ;(<ElementContainer>root).vnode = vnode
+      ;(<ElementContainer>root).queued = false
     })
   }
   // updating
   else {
-    !(<NodeVNode>root).queued && requestAnimationFrame(() => {
-      ;(<NodeVNode>root).queued = true
-      diff((<NodeVNode>root).vnode, vnode)
-      ;(<NodeVNode>root).vnode = vnode
-      ;(<NodeVNode>root).queued = false
+    !(<ElementContainer>root).queued && requestAnimationFrame(() => {
+      ;(<ElementContainer>root).queued = true
+      diff((<ElementContainer>root).vnode, vnode)
+      ;(<ElementContainer>root).vnode = vnode
+      ;(<ElementContainer>root).queued = false
     })
   }
 
