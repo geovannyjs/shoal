@@ -1,4 +1,4 @@
 import { VNode } from './VNode';
-declare type Renderer = (v: VNode) => void;
-declare const container: (root: Element) => Renderer;
-export { container };
+declare type Renderer = () => void;
+declare const mount: (root: Element) => (vNodeProvider: () => VNode) => Renderer;
+export { mount };

@@ -6,7 +6,7 @@ type ElementContainer = Element & {
   vnode?: VNode 
 }
 
-type Renderer = (v: VNode) => void
+type Renderer = () => void
 
 // FIXME it would be good to accept document as a param
 // so it would be possible to use something like jsdom
@@ -94,28 +94,32 @@ const diff = (old?: VNode, cur?: VNode, parent?: Node): void => {
 
 const rAF = typeof requestAnimationFrame === 'undefined' ? (fn: Function) => fn() : requestAnimationFrame
 
-const container = (root: Element): Renderer => {
+const mount = (root: Element) => (vNodeProvider: () => VNode): Renderer => {
 
-  const rAFCaller = (fn: Function, vnode: VNode) => !(<ElementContainer>root).queued && rAF(() => {
+  const rAFCaller = (fn: () => VNode) => !(<ElementContainer>root).queued && rAF(() => {
     ;(<ElementContainer>root).queued = true
-    fn()
+    const vnode = fn()
     ;(<ElementContainer>root).vnode = vnode
     ;(<ElementContainer>root).queued = false
   })
 
-  return (vnode: VNode) => rAFCaller((<ElementContainer>root).vnode ?
-    // update
-    () => diff((<ElementContainer>root).vnode, vnode) :
-    // first drawn
-    () => {
-      root.textContent = ''
-      root.appendChild(buildNode(vnode))
-    },
-    vnode
-  )
+  // first drawn
+  rAFCaller(() => {
+    const vnode = vNodeProvider()
+    root.textContent = ''
+    root.appendChild(buildNode(vnode))
+    return vnode
+  })
 
+  return () => {
+    rAFCaller(() => { 
+      const vnode = vNodeProvider()
+      diff((<ElementContainer>root).vnode, vnode)
+      return vnode
+    })
+  }
 }
 
 export {
-  container
+  mount
 }
