@@ -1,7 +1,10 @@
 import { VNode, Type as VNodeType } from './VNode'
 
 
-type NodeVNode = Node & { vnode?: VNode }
+type NodeVNode = Node & {
+  queued: boolean
+  vnode?: VNode 
+}
 
 // FIXME it would be good to accept document as a param
 // so it would be possible to use something like jsdom
@@ -91,15 +94,23 @@ const render = (root: Node, vnode: VNode) => {
 
   // first time rendering
   if ((<NodeVNode>root).vnode == undefined) {
-    root.textContent = ''
-    root.appendChild(buildNode(vnode))
+    !(<NodeVNode>root).queued && requestAnimationFrame(() => {
+      ;(<NodeVNode>root).queued = true
+      root.textContent = ''
+      root.appendChild(buildNode(vnode))
+      ;(<NodeVNode>root).vnode = vnode
+      ;(<NodeVNode>root).queued = false
+    })
   }
   // updating
   else {
-    diff((<NodeVNode>root).vnode, vnode)
+    !(<NodeVNode>root).queued && requestAnimationFrame(() => {
+      ;(<NodeVNode>root).queued = true
+      diff((<NodeVNode>root).vnode, vnode)
+      ;(<NodeVNode>root).vnode = vnode
+      ;(<NodeVNode>root).queued = false
+    })
   }
-
-  ;(<NodeVNode>root).vnode = vnode
 
 }
 
