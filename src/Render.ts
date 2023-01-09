@@ -6,11 +6,13 @@ type ElementContainer = Element & {
   vnode?: VNode 
 }
 
+type Renderer = (v: VNode) => void
+
 // FIXME it would be good to accept document as a param
 // so it would be possible to use something like jsdom
 const $doc: Document = window.document
 
-const buildNode = (vnode: VNode):Node => {
+const buildNode = (vnode: VNode): Node => {
   const dispatcher = {
     [VNodeType.Component]: buildNodeComponent,
     [VNodeType.Fragment]: buildNodeFragment,
@@ -21,21 +23,21 @@ const buildNode = (vnode: VNode):Node => {
   return dispatcher[vnode.type](vnode)
 }
 
-const buildNodeComponent = (vnode: VNode):Node => {
+const buildNodeComponent = (vnode: VNode): Node => {
   return buildNode(vnode.children[0])
 }
 
-const buildNodeFragment = (vnode: VNode):Node => {
+const buildNodeFragment = (vnode: VNode): Node => {
   const fragment = $doc.createDocumentFragment()
   vnode.children.forEach(vn => fragment.appendChild(buildNode(vn)))
   return fragment
 }
 
-const buildNodeRaw = (vnode: VNode):Node => {
+const buildNodeRaw = (vnode: VNode): Node => {
   return $doc.createDocumentFragment()
 }
 
-const buildNodeTag = (vnode: VNode):Node => {
+const buildNodeTag = (vnode: VNode): Node => {
   vnode.dom = $doc.createElement(<string>vnode.item)
 
   // set attrs
@@ -47,13 +49,13 @@ const buildNodeTag = (vnode: VNode):Node => {
   return vnode.dom
 }
 
-const buildNodeText = (vnode: VNode):Node => {
+const buildNodeText = (vnode: VNode): Node => {
   vnode.dom = $doc.createTextNode(<string>vnode.item)
   return vnode.dom
 }
 
 // parent will be useful when the old vnode is undefined but the cur vnode is defined (insert operation)
-const diff = (old?: VNode, cur?: VNode, parent?: Node):void => {
+const diff = (old?: VNode, cur?: VNode, parent?: Node): void => {
 
   // just the old - remove
   if(old && !cur) {}
@@ -92,32 +94,28 @@ const diff = (old?: VNode, cur?: VNode, parent?: Node):void => {
 
 const rAF = typeof requestAnimationFrame === 'undefined' ? (fn: Function) => fn() : requestAnimationFrame
 
-const render = (root: Element, vnode: VNode) => {
+const container = (root: Element): Renderer => {
 
-  const rAFCaller = (fn: Function) => !(<ElementContainer>root).queued && rAF(() => {
+  const rAFCaller = (fn: Function, vnode: VNode) => !(<ElementContainer>root).queued && rAF(() => {
     ;(<ElementContainer>root).queued = true
     fn()
     ;(<ElementContainer>root).vnode = vnode
     ;(<ElementContainer>root).queued = false
   })
 
-  // first time rendering
-  if ((<ElementContainer>root).vnode == undefined) {
-    rAFCaller(() => {
+  return (vnode: VNode) => rAFCaller((<ElementContainer>root).vnode ?
+    // update
+    () => diff((<ElementContainer>root).vnode, vnode) :
+    // first drawn
+    () => {
       root.textContent = ''
       root.appendChild(buildNode(vnode))
-    })
-  }
-
-  // updating
-  else {
-    rAFCaller(() => {
-      diff((<ElementContainer>root).vnode, vnode)
-    })
-  }
+    },
+    vnode
+  )
 
 }
 
 export {
-  render
+  container
 }

@@ -1,9 +1,9 @@
 import { fragments, h, trust } from './Hyperscript'
-import { render } from './Render'
+import { container } from './Render'
 
 export {
+  container,
   fragments,
   h,
-  render,
   trust
 }
