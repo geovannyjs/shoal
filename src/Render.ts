@@ -94,23 +94,25 @@ const rAF = typeof requestAnimationFrame === 'undefined' ? (fn: Function) => fn(
 
 const render = (root: Element, vnode: VNode) => {
 
+  const rAFCaller = (fn: Function) => !(<ElementContainer>root).queued && rAF(() => {
+    ;(<ElementContainer>root).queued = true
+    fn()
+    ;(<ElementContainer>root).vnode = vnode
+    ;(<ElementContainer>root).queued = false
+  })
+
   // first time rendering
   if ((<ElementContainer>root).vnode == undefined) {
-    !(<ElementContainer>root).queued && rAF(() => {
-      ;(<ElementContainer>root).queued = true
+    rAFCaller(() => {
       root.textContent = ''
       root.appendChild(buildNode(vnode))
-      ;(<ElementContainer>root).vnode = vnode
-      ;(<ElementContainer>root).queued = false
     })
   }
+
   // updating
   else {
-    !(<ElementContainer>root).queued && rAF(() => {
-      ;(<ElementContainer>root).queued = true
+    rAFCaller(() => {
       diff((<ElementContainer>root).vnode, vnode)
-      ;(<ElementContainer>root).vnode = vnode
-      ;(<ElementContainer>root).queued = false
     })
   }
 
