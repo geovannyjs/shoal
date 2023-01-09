@@ -90,11 +90,13 @@ const diff = (old?: VNode, cur?: VNode, parent?: Node):void => {
 
 }
 
+const rAF = typeof requestAnimationFrame === 'undefined' ? (fn: Function) => fn() : requestAnimationFrame
+
 const render = (root: Element, vnode: VNode) => {
 
   // first time rendering
   if ((<ElementContainer>root).vnode == undefined) {
-    !(<ElementContainer>root).queued && requestAnimationFrame(() => {
+    !(<ElementContainer>root).queued && rAF(() => {
       ;(<ElementContainer>root).queued = true
       root.textContent = ''
       root.appendChild(buildNode(vnode))
@@ -104,7 +106,7 @@ const render = (root: Element, vnode: VNode) => {
   }
   // updating
   else {
-    !(<ElementContainer>root).queued && requestAnimationFrame(() => {
+    !(<ElementContainer>root).queued && rAF(() => {
       ;(<ElementContainer>root).queued = true
       diff((<ElementContainer>root).vnode, vnode)
       ;(<ElementContainer>root).vnode = vnode

@@ -1,3 +1,3 @@
 import { VNode } from './VNode';
-declare const render: (root: Node, vnode: VNode) => void;
+declare const render: (root: Element, vnode: VNode) => void;
 export { render };
