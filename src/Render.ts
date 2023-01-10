@@ -4,7 +4,6 @@ import { VNode, Type as VNodeType } from './VNode'
 
 
 type ElementContainer = Element & {
-  queued: boolean
   vnode?: VNode 
 }
 
@@ -112,27 +111,20 @@ const rAF = typeof requestAnimationFrame === 'undefined' ? (fn: Function) => fn(
 
 const mount = (root: Element) => (component: Component<any>): Redraw => {
 
-  const rAFCaller = (fn: () => VNode) => !(<ElementContainer>root).queued && rAF(() => {
-    ;(<ElementContainer>root).queued = true
-    const vnode = fn()
-    ;(<ElementContainer>root).vnode = vnode
-    ;(<ElementContainer>root).queued = false
-  })
-
   // redraw
-  const redraw = () => rAFCaller(() => {
+  const redraw = () => rAF(() => {
     const vnode = h(component)
     diff(redraw, (<ElementContainer>root).vnode, vnode)
-    return vnode
+    ;(<ElementContainer>root).vnode = vnode
   })
 
 
   // first drawn
-  rAFCaller(() => {
+  rAF(() => {
     const vnode = h(component)
     root.textContent = ''
     root.appendChild(buildNode(redraw, vnode))
-    return vnode
+    ;(<ElementContainer>root).vnode = vnode
   })
 
   return redraw
