@@ -101,8 +101,6 @@ const rAF = typeof requestAnimationFrame === 'undefined' ? (fn: Function) => fn(
 
 const mount = (root: Element) => (component: Component<any>): Renderer => {
 
-  const vnode = h(component)
-
   const rAFCaller = (fn: () => VNode) => !(<ElementContainer>root).queued && rAF(() => {
     ;(<ElementContainer>root).queued = true
     const vnode = fn()
@@ -110,20 +108,26 @@ const mount = (root: Element) => (component: Component<any>): Renderer => {
     ;(<ElementContainer>root).queued = false
   })
 
-  // first drawn
-  rAFCaller(() => {
-    root.textContent = ''
-    root.appendChild(buildNode(vnode))
-    return vnode
-  })
-
-  return () => {
+  // redraw
+  const redraw = () => {
     rAFCaller(() => { 
       const vnode = h(component)
       diff((<ElementContainer>root).vnode, vnode)
       return vnode
     })
   }
+
+
+  // first drawn
+  rAFCaller(() => {
+    const vnode = h(component)
+    root.textContent = ''
+    root.appendChild(buildNode(vnode))
+    return vnode
+  })
+
+  return redraw
+
 }
 
 export {
