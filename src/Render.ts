@@ -59,14 +59,8 @@ const buildNodeText = (redraw: Redraw, vnode: VNode): Node => {
 // parent will be useful when the old vnode is undefined but the cur vnode is defined (insert operation)
 const diff = (redraw: Redraw, old?: VNode, cur?: VNode, parent?: Node): void => {
 
-  // just the old - remove
-  if(old && !cur) {}
-
-  // just the cur - insert
-  else if(!old && cur) {}
-
   // from now on, both
-  else if(old && cur) {
+  if(old && cur) {
 
     if(old.type !== cur.type) {}
     else {
@@ -100,6 +94,12 @@ const diff = (redraw: Redraw, old?: VNode, cur?: VNode, parent?: Node): void => 
     }
 
   }
+
+  // just the old - remove
+  else if(old && !cur) {}
+
+  // just the cur - insert
+  else if(cur) {}
 
 }
 
