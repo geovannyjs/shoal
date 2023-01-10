@@ -73,28 +73,31 @@ const diff = (redraw: Redraw, old?: VNode, cur?: VNode, parent?: Node): void => 
   // from now on, both
   else if(old && cur) {
 
-    // Component
-    if(old.type === VNodeType.Component && cur.type === VNodeType.Component) {
-      cur.item = (<Component<any>>cur.item)(cur.attrs, redraw)
-      cur.children = [(<ComponentReturn>cur.item).view({ attrs: cur.attrs, children: cur.children })]
-      for(let i=0; i < old.children.length; i++) diff(redraw, old.children[i], cur.children[i])
-    }
+    if(old.type !== cur.type) {}
+    else {
+      // Component
+      if(cur.type === VNodeType.Component) {
+        cur.item = (<Component<any>>cur.item)(cur.attrs, redraw)
+        cur.children = [(<ComponentReturn>cur.item).view({ attrs: cur.attrs, children: cur.children })]
+        for(let i=0; i < old.children.length; i++) diff(redraw, old.children[i], cur.children[i])
+      }
 
-    // Fragment
-    if(old.type === VNodeType.Fragment && cur.type === VNodeType.Fragment) {
-      for(let i=0; i < old.children.length; i++) diff(redraw, old.children[i], cur.children[i])
-    }
+      // Fragment
+      else if(cur.type === VNodeType.Fragment) {
+        for(let i=0; i < old.children.length; i++) diff(redraw, old.children[i], cur.children[i])
+      }
 
-    // Tag
-    if(old.type === VNodeType.Tag && cur.type === VNodeType.Tag) {
-      //(<Element>old.dom).replaceWith(buildNodeText(cur))
-      for(let i=0; i < old.children.length; i++) diff(redraw, old.children[i], cur.children[i])
-    }
+      // Tag
+      else if(cur.type === VNodeType.Tag) {
+        //(<Element>old.dom).replaceWith(buildNodeText(cur))
+        for(let i=0; i < old.children.length; i++) diff(redraw, old.children[i], cur.children[i])
+      }
 
-    // Text
-    if(old.type === VNodeType.Text && cur.type === VNodeType.Text) {
-      ;(<Element>old.dom).textContent = <string>cur.item
-      cur.dom = old.dom
+      // Text
+      else if(cur.type === VNodeType.Text) {
+        ;(<Element>old.dom).textContent = <string>cur.item
+        cur.dom = old.dom
+      }
     }
 
   }
