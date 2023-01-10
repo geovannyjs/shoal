@@ -1,4 +1,4 @@
-import { Component, ComponentReturn } from './Component'
+import { Component } from './Component'
 import { h } from './Hyperscript'
 import { VNode, Type as VNodeType } from './VNode'
 

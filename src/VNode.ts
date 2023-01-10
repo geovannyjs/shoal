@@ -27,8 +27,11 @@ const normalize = (node: any): VNode => {
 }
 
 const normalizeChildren = (nodes: Array<any>): Array<VNode> => {
-  for(let i=0; i < nodes.length; i++) nodes[i] = normalize(nodes[i])
-  return nodes
+  let normalized: Array<VNode> = []
+  for(let i=0; i < nodes.length; i++) {
+    if(nodes[i] != null) normalized[i] = normalize(nodes[i])
+  }
+  return normalized
 }
 
 export {
