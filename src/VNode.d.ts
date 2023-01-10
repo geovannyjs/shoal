@@ -9,7 +9,8 @@ declare enum Type {
 declare type VNode = {
     __sv__: boolean;
     type: Type;
-    item: Component<any> | ComponentReturn | string;
+    item: Component<any> | string;
+    instance?: ComponentReturn;
     attrs: object;
     children: Array<VNode>;
     dom?: Node;

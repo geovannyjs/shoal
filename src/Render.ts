@@ -26,8 +26,8 @@ const buildNode = (redraw: Redraw, vnode: VNode): Node => {
 }
 
 const buildNodeComponent = (redraw: Redraw, vnode: VNode): Node => {
-  vnode.item = (<Component<any>>vnode.item)(vnode.attrs, redraw)
-  vnode.children = [(<ComponentReturn>vnode.item).view({ attrs: vnode.attrs, children: vnode.children })]
+  vnode.instance = (<Component<any>>vnode.item)(vnode.attrs, redraw)
+  vnode.children = [vnode.instance.view({ attrs: vnode.attrs, children: vnode.children })]
   return buildNode(redraw, vnode.children[0])
 }
 
@@ -77,8 +77,12 @@ const diff = (redraw: Redraw, old?: VNode, cur?: VNode, parent?: Node): void => 
     else {
       // Component
       if(cur.type === VNodeType.Component) {
-        cur.item = (<Component<any>>cur.item)(cur.attrs, redraw)
-        cur.children = [(<ComponentReturn>cur.item).view({ attrs: cur.attrs, children: cur.children })]
+
+        // component is the same, so keep the instance
+        if(old.item !== cur.item) cur.instance = (<Component<any>>cur.item)(cur.attrs, redraw)
+        else cur.instance = old.instance
+
+        cur.children = cur.instance ? [cur.instance?.view({ attrs: cur.attrs, children: cur.children })] : []
         for(let i=0; i < old.children.length; i++) diff(redraw, old.children[i], cur.children[i])
       }
 
