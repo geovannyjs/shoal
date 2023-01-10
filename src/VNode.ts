@@ -1,4 +1,4 @@
-import { ComponentReturn } from './Component'
+import { Component, ComponentReturn } from './Component'
 import { pure } from './Object'
 
 
@@ -13,7 +13,7 @@ enum Type {
 type VNode = {
   __sv__: boolean
   type: Type
-  item: ComponentReturn | string
+  item: Component<any> | ComponentReturn | string
   attrs: object
   children: Array<VNode>
   dom?: Node

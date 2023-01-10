@@ -1,4 +1,4 @@
-import { Component } from './Component'
+import { Component, ComponentReturn } from './Component'
 import { h } from './Hyperscript'
 import { VNode, Type as VNodeType } from './VNode'
 
@@ -26,6 +26,8 @@ const buildNode = (vnode: VNode): Node => {
 }
 
 const buildNodeComponent = (vnode: VNode): Node => {
+  vnode.item = (<Component<any>>vnode.item)(vnode.attrs, () => {})
+  vnode.children = [(<ComponentReturn>vnode.item).view({ attrs: vnode.attrs, children: vnode.children })]
   return buildNode(vnode.children[0])
 }
 
@@ -73,6 +75,8 @@ const diff = (old?: VNode, cur?: VNode, parent?: Node): void => {
 
     // Component
     if(old.type === VNodeType.Component && cur.type === VNodeType.Component) {
+      cur.item = (<Component<any>>cur.item)(cur.attrs, () => {})
+      cur.children = [(<ComponentReturn>cur.item).view({ attrs: cur.attrs, children: cur.children })]
       for(let i=0; i < old.children.length; i++) diff(old.children[i], cur.children[i])
     }
 

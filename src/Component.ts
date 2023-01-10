@@ -17,7 +17,7 @@ type ComponentViewMethod = {
 
 type ComponentReturn = ComponentLifeCycleMethods & ComponentViewMethod
 
-type Component<T extends object> = (attrs: Attrs<T>) => ComponentReturn
+type Component<T extends object> = (attrs: Attrs<T>, redraw: () => void) => ComponentReturn
 
 export {
   Attrs,

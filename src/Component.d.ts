@@ -14,5 +14,5 @@ declare type ComponentViewMethod = {
     }) => VNode;
 };
 declare type ComponentReturn = ComponentLifeCycleMethods & ComponentViewMethod;
-declare type Component<T extends object> = (attrs: Attrs<T>) => ComponentReturn;
+declare type Component<T extends object> = (attrs: Attrs<T>, redraw: () => void) => ComponentReturn;
 export { Attrs, Component, ComponentLifeCycleMethods, ComponentReturn, ComponentViewMethod };

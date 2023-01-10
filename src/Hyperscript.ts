@@ -3,7 +3,7 @@ import {
   Type as VNodeType,
   VNode
 } from './VNode'
-import { Component, ComponentReturn } from './Component'
+import { Component } from './Component'
 import { pure } from './Object'
 
 
@@ -20,14 +20,13 @@ const h = (item: Component<any> | string, ...args: Array<any>): VNode => {
   // if the second param is an attrs object
   const [attrs, children] = typeof args[0] === 'object' && !args[0].__sv__ && !Array.isArray(args[0]) ? [args[0], args.slice(1)] : [pure(), args]
   const isComponent = typeof item === 'function'
-  const evaluatedItem = isComponent ? item(attrs) : item
 
   return pure({
     __sv__: true,
     type: isComponent ? VNodeType.Component : VNodeType.Tag,
-    item: evaluatedItem,
+    item,
     attrs,
-    children: isComponent ? [(<ComponentReturn>evaluatedItem).view({ attrs, children })] : normalizeChildren(children)
+    children: isComponent ? children : normalizeChildren(children)
   })
 
 }

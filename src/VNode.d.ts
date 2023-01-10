@@ -1,4 +1,4 @@
-import { ComponentReturn } from './Component';
+import { Component, ComponentReturn } from './Component';
 declare enum Type {
     Component = 0,
     Fragment = 1,
@@ -9,7 +9,7 @@ declare enum Type {
 declare type VNode = {
     __sv__: boolean;
     type: Type;
-    item: ComponentReturn | string;
+    item: Component<any> | ComponentReturn | string;
     attrs: object;
     children: Array<VNode>;
     dom?: Node;
