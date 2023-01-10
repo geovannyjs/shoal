@@ -3,10 +3,6 @@ import { h } from './Hyperscript'
 import { VNode, Type as VNodeType } from './VNode'
 
 
-type ElementContainer = Element & {
-  vnode?: VNode 
-}
-
 type Redraw = () => void
 
 // FIXME it would be good to accept document as a param
@@ -111,11 +107,13 @@ const rAF = typeof requestAnimationFrame === 'undefined' ? (fn: Function) => fn(
 
 const mount = (root: Element) => (component: Component<any>): Redraw => {
 
+  let oldVNode: VNode
+
   // redraw
   const redraw = () => rAF(() => {
     const vnode = h(component)
-    diff(redraw, (<ElementContainer>root).vnode, vnode)
-    ;(<ElementContainer>root).vnode = vnode
+    diff(redraw, oldVNode, vnode)
+    oldVNode = vnode
   })
 
 
@@ -124,7 +122,7 @@ const mount = (root: Element) => (component: Component<any>): Redraw => {
     const vnode = h(component)
     root.textContent = ''
     root.appendChild(buildNode(redraw, vnode))
-    ;(<ElementContainer>root).vnode = vnode
+    oldVNode = vnode
   })
 
   return redraw
