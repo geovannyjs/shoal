@@ -27,9 +27,9 @@ const buildNodeComponent = (redraw: Redraw, vnode: VNode): Node => {
 }
 
 const buildNodeFragment = (redraw: Redraw, vnode: VNode): Node => {
-  const fragment = $doc.createDocumentFragment()
-  for(let i=0; i < vnode.children.length; i++) fragment.appendChild(buildNode(redraw, vnode.children[i]))
-  return fragment
+  vnode.dom = $doc.createDocumentFragment()
+  for(let i=0; i < vnode.children.length; i++) vnode.dom.appendChild(buildNode(redraw, vnode.children[i]))
+  return vnode.dom
 }
 
 const buildNodeRaw = (redraw: Redraw, vnode: VNode): Node => {
@@ -100,10 +100,7 @@ const diff = (redraw: Redraw, old?: VNode, cur?: VNode, parent?: Node): void => 
   else if(old && !cur) (<Element>old.dom).remove()
 
   // just the cur - insert
-  else if(cur) {
-    cur.dom = buildNode(redraw, cur)
-    ;(<Element>parent).appendChild(cur.dom)
-  }
+  else if(cur) (<Element>parent).appendChild(buildNode(redraw, cur))
 
 }
 
