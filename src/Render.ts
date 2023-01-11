@@ -40,10 +40,14 @@ const buildNodeTag = (redraw: Redraw, vnode: VNode): Node => {
   vnode.dom = $doc.createElement(<string>vnode.item)
 
   // set attrs
-  Object.entries(vnode.attrs).forEach(([k, v]) => { 
+  type ObjectKey = keyof typeof vnode.attrs;
+  const keys = Object.keys(vnode.attrs)
+  for(let i=0; i < keys.length; i++) {
+    let k = keys[i]
+    let v = vnode.attrs[k as ObjectKey]
     if (k.slice(0, 2) === 'on') (<Element>vnode.dom).addEventListener(k.slice(2), v)
     else (<Element>vnode.dom).setAttribute(k, v) 
-  })
+  }
 
   // children
   for(let i=0; i < vnode.children.length; i++) vnode.dom?.appendChild(buildNode(redraw, vnode.children[i]))
