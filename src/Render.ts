@@ -23,7 +23,8 @@ const buildNode = (redraw: Redraw, vnode: VNode): Node => {
 const buildNodeComponent = (redraw: Redraw, vnode: VNode): Node => {
   vnode.instance = (<Component<any>>vnode.item)(vnode.attrs, redraw)
   vnode.children = [vnode.instance.view({ attrs: vnode.attrs, children: vnode.children })]
-  return buildNode(redraw, vnode.children[0])
+  vnode.dom = buildNode(redraw, vnode.children[0])
+  return vnode.dom
 }
 
 const buildNodeFragment = (redraw: Redraw, vnode: VNode): Node => {
@@ -93,6 +94,8 @@ const diff = (redraw: Redraw, old?: VNode, cur?: VNode, parent?: Node): void => 
         }
       }
 
+      // for vnodes that may have children ( components, fragments and tags )
+      // diff the children and keep the dom reference
       for(let i=0; i < Math.max(old.children.length, cur.children.length); i++) diff(redraw, old.children[i], cur.children[i], old.dom)
       cur.dom = old.dom
 
