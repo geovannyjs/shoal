@@ -4,38 +4,37 @@ import {
   VNode
 } from './VNode'
 import { Component } from './Component'
-import { pure } from './Object'
 
 
-const fragments = (...nodes: Array<any>): VNode => pure({
+const fragments = (...nodes: Array<any>): VNode => ({
   __sv__: true,
   type: VNodeType.Fragment,
   item: '',
-  attrs: pure(),
+  attrs: {},
   children: normalizeChildren(nodes)
 })
 
 const h = (item: Component<any> | string, ...args: Array<any>): VNode => {
 
   // if the second param is an attrs object
-  const [attrs, children] = args[0] != null && !args[0].__sv__ && typeof args[0] === 'object' && !Array.isArray(args[0]) ? [args[0], args.slice(1)] : [pure(), args]
+  const [attrs, children] = args[0] != null && !args[0].__sv__ && typeof args[0] === 'object' && !Array.isArray(args[0]) ? [args[0], args.slice(1)] : [{}, args]
   const isComponent = typeof item === 'function'
 
-  return pure({
+  return {
     __sv__: true,
     type: isComponent ? VNodeType.Component : VNodeType.Tag,
     item,
     attrs,
     children: isComponent ? children : normalizeChildren(children)
-  })
+  }
 
 }
 
-const trust = (html: string = ''): VNode => pure({
+const trust = (html: string = ''): VNode => ({
   __sv__: true,
   type: VNodeType.Raw,
   item: html,
-  attrs: pure(),
+  attrs: {},
   children: []
 })
 
