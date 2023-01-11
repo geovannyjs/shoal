@@ -67,7 +67,10 @@ const diff = (redraw: Redraw, old?: VNode, cur?: VNode, parent?: Node): void => 
   // from now on, both
   if(old && cur) {
 
-    if(old.type !== cur.type) {}
+    if(old.type !== cur.type) {
+      ;(<Element>old.dom).replaceWith(buildNode(redraw, cur))
+      return
+    }
     else {
       // Text
       if(cur.type === VNodeType.Text) {
