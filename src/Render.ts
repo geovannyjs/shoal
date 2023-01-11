@@ -83,7 +83,10 @@ const diff = (redraw: Redraw, old?: VNode, cur?: VNode, parent?: Node): void => 
 
       // Tag
       else if(cur.type === VNodeType.Tag) {
-        //(<Element>old.dom).replaceWith(buildNodeText(cur))
+        if(old.item !== cur.item) { 
+          (<Element>old.dom).replaceWith(buildNodeTag(redraw, cur))
+          return
+        }
       }
 
       for(let i=0; i < Math.max(old.children.length, cur.children.length); i++) diff(redraw, old.children[i], cur.children[i], old.dom)
