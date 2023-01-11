@@ -28,7 +28,7 @@ const buildNodeComponent = (redraw: Redraw, vnode: VNode): Node => {
 
 const buildNodeFragment = (redraw: Redraw, vnode: VNode): Node => {
   const fragment = $doc.createDocumentFragment()
-  vnode.children.forEach(vn => fragment.appendChild(buildNode(redraw, vn)))
+  for(let i=0; i < vnode.children.length; i++) fragment.appendChild(buildNode(redraw, vnode.children[i]))
   return fragment
 }
 
@@ -46,7 +46,7 @@ const buildNodeTag = (redraw: Redraw, vnode: VNode): Node => {
   })
 
   // children
-  vnode.children.forEach(vn => vnode.dom?.appendChild(buildNode(redraw, vn)))
+  for(let i=0; i < vnode.children.length; i++) vnode.dom?.appendChild(buildNode(redraw, vnode.children[i]))
 
   return vnode.dom
 }
@@ -64,36 +64,31 @@ const diff = (redraw: Redraw, old?: VNode, cur?: VNode, parent?: Node): void => 
 
     if(old.type !== cur.type) {}
     else {
-      // Component
-      if(cur.type === VNodeType.Component) {
+      // Text
+      if(cur.type === VNodeType.Text) {
+        ;(<Element>old.dom).textContent = <string>cur.item
+        cur.dom = old.dom
+        return
+      }
 
-        // component is the same, so keep the instance
+      // Component
+      else if(cur.type === VNodeType.Component) {
+
+        // component is different, so create a new instance
         if(old.item !== cur.item) cur.instance = (<Component<any>>cur.item)(cur.attrs, redraw)
         else cur.instance = old.instance
 
         cur.children = cur.instance ? [cur.instance?.view({ attrs: cur.attrs, children: cur.children })] : []
-        for(let i=0; i < Math.max(old.children.length, cur.children.length); i++) diff(redraw, old.children[i], cur.children[i], old.dom)
-        cur.dom = old.dom
-      }
-
-      // Fragment
-      else if(cur.type === VNodeType.Fragment) {
-        for(let i=0; i < Math.max(old.children.length, cur.children.length); i++) diff(redraw, old.children[i], cur.children[i], old.dom)
-        cur.dom = old.dom
       }
 
       // Tag
       else if(cur.type === VNodeType.Tag) {
         //(<Element>old.dom).replaceWith(buildNodeText(cur))
-        for(let i=0; i < Math.max(old.children.length, cur.children.length); i++) diff(redraw, old.children[i], cur.children[i], old.dom)
-        cur.dom = old.dom
       }
 
-      // Text
-      else if(cur.type === VNodeType.Text) {
-        ;(<Element>old.dom).textContent = <string>cur.item
-        cur.dom = old.dom
-      }
+      for(let i=0; i < Math.max(old.children.length, cur.children.length); i++) diff(redraw, old.children[i], cur.children[i], old.dom)
+      cur.dom = old.dom
+
     }
 
   }
