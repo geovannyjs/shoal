@@ -72,18 +72,21 @@ const diff = (redraw: Redraw, old?: VNode, cur?: VNode, parent?: Node): void => 
         else cur.instance = old.instance
 
         cur.children = cur.instance ? [cur.instance?.view({ attrs: cur.attrs, children: cur.children })] : []
-        for(let i=0; i < old.children.length; i++) diff(redraw, old.children[i], cur.children[i])
+        for(let i=0; i < Math.max(old.children.length, cur.children.length); i++) diff(redraw, old.children[i], cur.children[i], old.dom)
+        cur.dom = old.dom
       }
 
       // Fragment
       else if(cur.type === VNodeType.Fragment) {
-        for(let i=0; i < old.children.length; i++) diff(redraw, old.children[i], cur.children[i])
+        for(let i=0; i < Math.max(old.children.length, cur.children.length); i++) diff(redraw, old.children[i], cur.children[i], old.dom)
+        cur.dom = old.dom
       }
 
       // Tag
       else if(cur.type === VNodeType.Tag) {
         //(<Element>old.dom).replaceWith(buildNodeText(cur))
-        for(let i=0; i < old.children.length; i++) diff(redraw, old.children[i], cur.children[i])
+        for(let i=0; i < Math.max(old.children.length, cur.children.length); i++) diff(redraw, old.children[i], cur.children[i], old.dom)
+        cur.dom = old.dom
       }
 
       // Text
@@ -96,10 +99,13 @@ const diff = (redraw: Redraw, old?: VNode, cur?: VNode, parent?: Node): void => 
   }
 
   // just the old - remove
-  else if(old && !cur) {}
+  else if(old && !cur) (<Element>old.dom).remove()
 
   // just the cur - insert
-  else if(cur) {}
+  else if(cur) {
+    cur.dom = buildNode(redraw, cur)
+    ;(<Element>parent).appendChild(cur.dom)
+  }
 
 }
 
