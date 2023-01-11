@@ -18,7 +18,7 @@ const fragments = (...nodes: Array<any>): VNode => pure({
 const h = (item: Component<any> | string, ...args: Array<any>): VNode => {
 
   // if the second param is an attrs object
-  const [attrs, children] = args[0] != null && typeof args[0] === 'object' && !args[0].__sv__ && !Array.isArray(args[0]) ? [args[0], args.slice(1)] : [pure(), args]
+  const [attrs, children] = args[0] != null && !args[0].__sv__ && typeof args[0] === 'object' && !Array.isArray(args[0]) ? [args[0], args.slice(1)] : [pure(), args]
   const isComponent = typeof item === 'function'
 
   return pure({
