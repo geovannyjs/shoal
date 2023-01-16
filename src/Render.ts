@@ -106,6 +106,9 @@ const diff = (redraw: Redraw, old?: VNode, cur?: VNode, parent?: Node): void => 
           // create all attrs from cur
           setElementAttrs(<Element>old.dom, cur.attrs)
           // if old attrs do not exist in the cur, delete them
+          const oldAttrs = Object.keys(old.attrs)
+          type ObjectKey = keyof typeof cur.attrs
+          for(let i = 0; i < oldAttrs.length; i++) if(!cur.attrs[oldAttrs[i] as ObjectKey]) (<Element>old.dom).removeAttribute(oldAttrs[i])
         }
       }
 
