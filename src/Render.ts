@@ -9,6 +9,19 @@ type Redraw = () => void
 // so it would be possible to use something like jsdom
 const $doc: Document = window.document
 
+const setElementAttrs = (el: Element, attrs: object):void => {
+
+  type ObjectKey = keyof typeof attrs
+  const keys = Object.keys(attrs)
+  for(let i=0; i < keys.length; i++) {
+    let k = keys[i]
+    let v = attrs[k as ObjectKey]
+    if (k.slice(0, 2) === 'on') el.addEventListener(k.slice(2), v)
+    else el.setAttribute(k, v) 
+  }
+
+}
+
 const buildNode = (redraw: Redraw, vnode: VNode): Node => {
   const dispatcher = {
     [VNodeType.Component]: buildNodeComponent,
@@ -41,14 +54,7 @@ const buildNodeTag = (redraw: Redraw, vnode: VNode): Node => {
   vnode.dom = $doc.createElement(<string>vnode.item)
 
   // set attrs
-  type ObjectKey = keyof typeof vnode.attrs;
-  const keys = Object.keys(vnode.attrs)
-  for(let i=0; i < keys.length; i++) {
-    let k = keys[i]
-    let v = vnode.attrs[k as ObjectKey]
-    if (k.slice(0, 2) === 'on') (<Element>vnode.dom).addEventListener(k.slice(2), v)
-    else (<Element>vnode.dom).setAttribute(k, v) 
-  }
+  setElementAttrs(<Element>vnode.dom, vnode.attrs)
 
   // children
   for(let i=0; i < vnode.children.length; i++) vnode.dom?.appendChild(buildNode(redraw, vnode.children[i]))
@@ -94,6 +100,12 @@ const diff = (redraw: Redraw, old?: VNode, cur?: VNode, parent?: Node): void => 
         if(old.item !== cur.item) { 
           (<Element>old.dom).replaceWith(buildNodeTag(redraw, cur))
           return
+        }
+        // diff attrs
+        else {
+          // create all attrs from cur
+          setElementAttrs(<Element>old.dom, cur.attrs)
+          // if old attrs do not exist in the cur, delete them
         }
       }
 
