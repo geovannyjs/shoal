@@ -121,7 +121,7 @@ const diff = (redraw: Redraw, old: VNode, cur: VNode): void => {
     }
     // old has more children, so remove them
     else if(toDiff < old.children.length) {
-      for(let i = toDiff; i < old.children.length; i++) (<Element>old.children[i].dom).remove()
+      for(let i = toDiff; i < old.children.length; i++) old.dom?.removeChild(<Node>old.children[i].dom)
     }
 
     // diff the number of children in common
