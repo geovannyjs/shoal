@@ -16,7 +16,7 @@ type VNode = {
   instance?: ComponentReturn
   attrs: object
   children: Array<VNode>
-  dom?: Node
+  dom?: Node | Element
 }
 
 const normalize = (node: any): VNode => {

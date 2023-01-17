@@ -22,7 +22,7 @@ const setElementAttrs = (el: Element, attrs: object):void => {
 
 }
 
-const buildNode = (redraw: Redraw, vnode: VNode): Node => {
+const buildNode = (redraw: Redraw, vnode: VNode): Node | Element => {
   const dispatcher = {
     [VNodeType.Component]: buildNodeComponent,
     [VNodeType.Fragment]: buildNodeFragment,
@@ -33,7 +33,7 @@ const buildNode = (redraw: Redraw, vnode: VNode): Node => {
   return dispatcher[vnode.type](redraw, vnode)
 }
 
-const buildNodeComponent = (redraw: Redraw, vnode: VNode): Node => {
+const buildNodeComponent = (redraw: Redraw, vnode: VNode): Node | Element => {
   vnode.instance = (<Component<any>>vnode.item)(vnode.attrs, redraw)
   vnode.children = [vnode.instance.view({ attrs: vnode.attrs, children: vnode.children })]
   vnode.dom = buildNode(redraw, vnode.children[0])
@@ -50,7 +50,7 @@ const buildNodeRaw = (redraw: Redraw, vnode: VNode): Node => {
   return $doc.createDocumentFragment()
 }
 
-const buildNodeTag = (redraw: Redraw, vnode: VNode): Node => {
+const buildNodeTag = (redraw: Redraw, vnode: VNode): Element => {
   vnode.dom = $doc.createElement(<string>vnode.item)
 
   // set attrs
@@ -59,7 +59,7 @@ const buildNodeTag = (redraw: Redraw, vnode: VNode): Node => {
   // children
   for(let i=0; i < vnode.children.length; i++) vnode.dom?.appendChild(buildNode(redraw, vnode.children[i]))
 
-  return vnode.dom
+  return <Element>vnode.dom
 }
 
 const buildNodeText = (redraw: Redraw, vnode: VNode): Node => {
@@ -105,7 +105,6 @@ const diff = (redraw: Redraw, old?: VNode, cur?: VNode, parent?: Node): void => 
         else {
           // if old attrs do not exist in the cur, delete them
           const oldAttrs = Object.keys(old.attrs)
-          type ObjectKey = keyof typeof cur.attrs
           type OldAttrsKey = keyof typeof old.attrs
           for(let i = 0; i < oldAttrs.length; i++) {
             if(oldAttrs[i].slice(0, 2) === 'on') { ;(<Element>old.dom).removeEventListener(oldAttrs[i].slice(2), old.attrs[oldAttrs[i] as OldAttrsKey]) }
