@@ -67,68 +67,68 @@ const buildNodeText = (redraw: Redraw, vnode: VNode): Node => {
   return vnode.dom
 }
 
-// parent will be useful when the old vnode is undefined but the cur vnode is defined (insert operation)
-const diff = (redraw: Redraw, old?: VNode, cur?: VNode, parent?: Node): void => {
+const diff = (redraw: Redraw, old: VNode, cur: VNode): void => {
 
-  // from now on, both
-  if(old && cur) {
-
-    if(old.type !== cur.type) {
-      ;(<Element>old.dom).replaceWith(buildNode(redraw, cur))
+  if(old.type !== cur.type) {
+    ;(<Element>old.dom).replaceWith(buildNode(redraw, cur))
+    return
+  }
+  else {
+    // Text
+    if(cur.type === VNodeType.Text) {
+      ;(<Element>old.dom).textContent = <string>cur.item
+      cur.dom = old.dom
       return
     }
-    else {
-      // Text
-      if(cur.type === VNodeType.Text) {
-        ;(<Element>old.dom).textContent = <string>cur.item
-        cur.dom = old.dom
-        return
-      }
 
-      // Component
-      else if(cur.type === VNodeType.Component) {
+    // Component
+    else if(cur.type === VNodeType.Component) {
 
-        // component is different, so create a new instance
-        if(old.item !== cur.item) cur.instance = (<Component<any>>cur.item)(cur.attrs, redraw)
-        else cur.instance = old.instance
+      // component is different, so create a new instance
+      if(old.item !== cur.item) cur.instance = (<Component<any>>cur.item)(cur.attrs, redraw)
+      else cur.instance = old.instance
 
-        cur.children = cur.instance ? [cur.instance?.view({ attrs: cur.attrs, children: cur.children })] : []
-      }
-
-      // Tag
-      else if(cur.type === VNodeType.Tag) {
-        if(old.item !== cur.item) { 
-          (<Element>old.dom).replaceWith(buildNodeTag(redraw, cur))
-          return
-        }
-        // diff attrs
-        else {
-          // if old attrs do not exist in the cur, delete them
-          const oldAttrs = Object.keys(old.attrs)
-          type OldAttrsKey = keyof typeof old.attrs
-          for(let i = 0; i < oldAttrs.length; i++) {
-            if(oldAttrs[i].slice(0, 2) === 'on') { ;(<Element>old.dom).removeEventListener(oldAttrs[i].slice(2), old.attrs[oldAttrs[i] as OldAttrsKey]) }
-            else (<Element>old.dom).removeAttribute(oldAttrs[i])
-          }
-          // create all attrs from cur
-          setElementAttrs(<Element>old.dom, cur.attrs)
-        }
-      }
-
-      // for vnodes that may have children ( components, fragments and tags )
-      // diff the children and keep the dom reference
-      for(let i=0; i < Math.max(old.children.length, cur.children.length); i++) diff(redraw, old.children[i], cur.children[i], old.dom)
-      cur.dom = old.dom
-
+      cur.children = cur.instance ? [cur.instance?.view({ attrs: cur.attrs, children: cur.children })] : []
     }
 
+    // Tag
+    else if(cur.type === VNodeType.Tag) {
+      if(old.item !== cur.item) { 
+        (<Element>old.dom).replaceWith(buildNodeTag(redraw, cur))
+        return
+      }
+      // diff attrs
+      else {
+        // if old attrs do not exist in the cur, delete them
+        const oldAttrs = Object.keys(old.attrs)
+        type OldAttrsKey = keyof typeof old.attrs
+        for(let i = 0; i < oldAttrs.length; i++) {
+          if(oldAttrs[i].slice(0, 2) === 'on') { ;(<Element>old.dom).removeEventListener(oldAttrs[i].slice(2), old.attrs[oldAttrs[i] as OldAttrsKey]) }
+          else (<Element>old.dom).removeAttribute(oldAttrs[i])
+        }
+        // create all attrs from cur
+        setElementAttrs(<Element>old.dom, cur.attrs)
+      }
+    }
+
+    // for vnodes that may have children ( components, fragments and tags )
+    // diff the children and keep the dom reference
+    const toDiff = Math.min(old.children.length, cur.children.length)
+
+    // cur has more children, so insert them
+    if(toDiff < cur.children.length) {
+      for(let i = toDiff; i < cur.children.length; i++) old.dom?.parentNode?.appendChild(buildNode(redraw, cur.children[i]))
+    }
+    // old has more children, so remove them
+    else if(toDiff < old.children.length) {
+      for(let i = toDiff; i < old.children.length; i++) (<Element>old.children[i].dom).remove()
+    }
+
+    // diff the number of children in common
+    for(let i=0; i < toDiff; i++) diff(redraw, old.children[i], cur.children[i])
+    cur.dom = old.dom
+
   }
-
-  // just the old - remove
-  else if(old && !cur) (<Element>old.dom).remove()
-
-  // just the cur - insert
-  else if(cur) (<Element>parent).appendChild(buildNode(redraw, cur))
 
 }
 
