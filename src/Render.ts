@@ -42,7 +42,10 @@ const buildNodeComponent = (redraw: Redraw, vnode: VNode): Node => {
 
 const buildNodeFragment = (redraw: Redraw, vnode: VNode): Node => {
   vnode.node = $doc.createDocumentFragment()
-  for(let i=0; i < vnode.children.length; i++) vnode.node.appendChild(buildNode(redraw, vnode.children[i]))
+  for(let i=0; i < vnode.children.length; i++) {
+    vnode.node.appendChild(buildNode(redraw, vnode.children[i]))
+    vnode.children[i].parent = vnode.node
+  }
   return vnode.node
 }
 
@@ -57,8 +60,10 @@ const buildNodeTag = (redraw: Redraw, vnode: VNode): Node => {
   setElementAttrs(<Element>vnode.node, vnode.attrs)
 
   // children
-  for(let i=0; i < vnode.children.length; i++) vnode.node?.appendChild(buildNode(redraw, vnode.children[i]))
-
+  for(let i=0; i < vnode.children.length; i++) {
+    vnode.node.appendChild(buildNode(redraw, vnode.children[i]))
+    vnode.children[i].parent = vnode.node
+  }
   return <Element>vnode.node
 }
 
@@ -117,7 +122,10 @@ const diff = (redraw: Redraw, old: VNode, cur: VNode): void => {
 
     // cur has more children, so insert them
     if(toDiff < cur.children.length) {
-      for(let i = toDiff; i < cur.children.length; i++) old.node?.parentNode?.appendChild(buildNode(redraw, cur.children[i]))
+      for(let i = toDiff; i < cur.children.length; i++) {
+        old.parent?.appendChild(buildNode(redraw, cur.children[i]))
+        cur.children[i].parent = old.node
+      }
     }
     // old has more children, so remove them
     else if(toDiff < old.children.length) {
@@ -151,6 +159,7 @@ const mount = (root: Element) => (component: Component<any>): Redraw => {
     const vnode = h(component)
     root.textContent = ''
     root.appendChild(buildNode(redraw, vnode))
+    vnode.parent = root
     oldVNode = vnode
   })
 
