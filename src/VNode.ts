@@ -16,7 +16,8 @@ type VNode = {
   instance?: ComponentReturn
   attrs: object
   children: Array<VNode>
-  dom?: Node | Element
+  node?: Node
+  parent?: Node
 }
 
 const normalize = (node: any): VNode => {
@@ -27,7 +28,7 @@ const normalize = (node: any): VNode => {
 
 const normalizeChildren = (nodes: Array<any>): Array<VNode> => {
   let normalized: Array<VNode> = []
-  for(let i=0; i < nodes.length; i++) {
+  for(let i = 0; i < nodes.length; i++) {
     if(nodes[i] != null) normalized.push(normalize(nodes[i]))
   }
   return normalized

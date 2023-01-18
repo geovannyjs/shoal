@@ -22,7 +22,7 @@ const setElementAttrs = (el: Element, attrs: object):void => {
 
 }
 
-const buildNode = (redraw: Redraw, vnode: VNode): Node | Element => {
+const buildNode = (redraw: Redraw, vnode: VNode): Node => {
   const dispatcher = {
     [VNodeType.Component]: buildNodeComponent,
     [VNodeType.Fragment]: buildNodeFragment,
@@ -33,51 +33,51 @@ const buildNode = (redraw: Redraw, vnode: VNode): Node | Element => {
   return dispatcher[vnode.type](redraw, vnode)
 }
 
-const buildNodeComponent = (redraw: Redraw, vnode: VNode): Node | Element => {
+const buildNodeComponent = (redraw: Redraw, vnode: VNode): Node => {
   vnode.instance = (<Component<any>>vnode.item)(vnode.attrs, redraw)
   vnode.children = [vnode.instance.view({ attrs: vnode.attrs, children: vnode.children })]
-  vnode.dom = buildNode(redraw, vnode.children[0])
-  return vnode.dom
+  vnode.node = buildNode(redraw, vnode.children[0])
+  return vnode.node
 }
 
 const buildNodeFragment = (redraw: Redraw, vnode: VNode): Node => {
-  vnode.dom = $doc.createDocumentFragment()
-  for(let i=0; i < vnode.children.length; i++) vnode.dom.appendChild(buildNode(redraw, vnode.children[i]))
-  return vnode.dom
+  vnode.node = $doc.createDocumentFragment()
+  for(let i=0; i < vnode.children.length; i++) vnode.node.appendChild(buildNode(redraw, vnode.children[i]))
+  return vnode.node
 }
 
 const buildNodeRaw = (redraw: Redraw, vnode: VNode): Node => {
   return $doc.createDocumentFragment()
 }
 
-const buildNodeTag = (redraw: Redraw, vnode: VNode): Element => {
-  vnode.dom = $doc.createElement(<string>vnode.item)
+const buildNodeTag = (redraw: Redraw, vnode: VNode): Node => {
+  vnode.node = $doc.createElement(<string>vnode.item)
 
   // set attrs
-  setElementAttrs(<Element>vnode.dom, vnode.attrs)
+  setElementAttrs(<Element>vnode.node, vnode.attrs)
 
   // children
-  for(let i=0; i < vnode.children.length; i++) vnode.dom?.appendChild(buildNode(redraw, vnode.children[i]))
+  for(let i=0; i < vnode.children.length; i++) vnode.node?.appendChild(buildNode(redraw, vnode.children[i]))
 
-  return <Element>vnode.dom
+  return <Element>vnode.node
 }
 
 const buildNodeText = (redraw: Redraw, vnode: VNode): Node => {
-  vnode.dom = $doc.createTextNode(<string>vnode.item)
-  return vnode.dom
+  vnode.node = $doc.createTextNode(<string>vnode.item)
+  return vnode.node
 }
 
 const diff = (redraw: Redraw, old: VNode, cur: VNode): void => {
 
   if(old.type !== cur.type) {
-    ;(<Element>old.dom).replaceWith(buildNode(redraw, cur))
+    ;(<Element>old.node).replaceWith(buildNode(redraw, cur))
     return
   }
   else {
     // Text
     if(cur.type === VNodeType.Text) {
-      ;(<Element>old.dom).textContent = <string>cur.item
-      cur.dom = old.dom
+      ;(<Element>old.node).textContent = <string>cur.item
+      cur.node = old.node
       return
     }
 
@@ -94,7 +94,7 @@ const diff = (redraw: Redraw, old: VNode, cur: VNode): void => {
     // Tag
     else if(cur.type === VNodeType.Tag) {
       if(old.item !== cur.item) { 
-        (<Element>old.dom).replaceWith(buildNodeTag(redraw, cur))
+        (<Element>old.node).replaceWith(buildNodeTag(redraw, cur))
         return
       }
       // diff attrs
@@ -103,11 +103,11 @@ const diff = (redraw: Redraw, old: VNode, cur: VNode): void => {
         const oldAttrs = Object.keys(old.attrs)
         type OldAttrsKey = keyof typeof old.attrs
         for(let i = 0; i < oldAttrs.length; i++) {
-          if(oldAttrs[i].slice(0, 2) === 'on') { ;(<Element>old.dom).removeEventListener(oldAttrs[i].slice(2), old.attrs[oldAttrs[i] as OldAttrsKey]) }
-          else (<Element>old.dom).removeAttribute(oldAttrs[i])
+          if(oldAttrs[i].slice(0, 2) === 'on') { ;(<Element>old.node).removeEventListener(oldAttrs[i].slice(2), old.attrs[oldAttrs[i] as OldAttrsKey]) }
+          else (<Element>old.node).removeAttribute(oldAttrs[i])
         }
         // create all attrs from cur
-        setElementAttrs(<Element>old.dom, cur.attrs)
+        setElementAttrs(<Element>old.node, cur.attrs)
       }
     }
 
@@ -117,16 +117,16 @@ const diff = (redraw: Redraw, old: VNode, cur: VNode): void => {
 
     // cur has more children, so insert them
     if(toDiff < cur.children.length) {
-      for(let i = toDiff; i < cur.children.length; i++) old.dom?.parentNode?.appendChild(buildNode(redraw, cur.children[i]))
+      for(let i = toDiff; i < cur.children.length; i++) old.node?.parentNode?.appendChild(buildNode(redraw, cur.children[i]))
     }
     // old has more children, so remove them
     else if(toDiff < old.children.length) {
-      for(let i = toDiff; i < old.children.length; i++) old.dom?.removeChild(<Node>old.children[i].dom)
+      for(let i = toDiff; i < old.children.length; i++) old.node?.removeChild(<Node>old.children[i].node)
     }
 
     // diff the number of children in common
     for(let i=0; i < toDiff; i++) diff(redraw, old.children[i], cur.children[i])
-    cur.dom = old.dom
+    cur.node = old.node
 
   }
 
