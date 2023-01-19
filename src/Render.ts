@@ -83,6 +83,7 @@ const diff = (redraw: Redraw, old: VNode, cur: VNode): void => {
     if(cur.type === VNodeType.Text) {
       ;(<Element>old.node).textContent = <string>cur.item
       cur.node = old.node
+      cur.parent = old.parent
       return
     }
 
@@ -135,6 +136,7 @@ const diff = (redraw: Redraw, old: VNode, cur: VNode): void => {
     // diff the number of children in common
     for(let i=0; i < toDiff; i++) diff(redraw, old.children[i], cur.children[i])
     cur.node = old.node
+    cur.parent = old.parent
 
   }
 
