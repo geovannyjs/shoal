@@ -25,6 +25,7 @@ const h = (item: Component<any> | string, ...args: Array<any>): VNode => {
     type: isComponent ? VNodeType.Component : VNodeType.Tag,
     item,
     attrs,
+    // component children do not need to be normalized, it will be normalized when component's view function is evaluated
     children: isComponent ? children : normalizeChildren(children)
   }
 
