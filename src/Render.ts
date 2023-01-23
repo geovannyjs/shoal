@@ -72,7 +72,7 @@ const buildNodeText = (redraw: Redraw, vnode: VNode): Node => {
   return vnode.node
 }
 
-const diff = (redraw: Redraw, old: VNode, cur: VNode): void => {
+const diff = (redraw: Redraw, old: VNode, cur: VNode, index: number = 0): void => {
 
   if(old.type !== cur.type) {
     ;(<Element>old.node).replaceWith(buildNode(redraw, cur))
@@ -134,7 +134,7 @@ const diff = (redraw: Redraw, old: VNode, cur: VNode): void => {
     }
 
     // diff the number of children in common
-    for(let i=0; i < toDiff; i++) diff(redraw, old.children[i], cur.children[i])
+    for(let i=0; i < toDiff; i++) diff(redraw, old.children[i], cur.children[i], i)
     cur.node = old.node
     cur.parent = old.parent
 
