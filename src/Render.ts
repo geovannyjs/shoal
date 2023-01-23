@@ -75,7 +75,16 @@ const buildNodeText = (redraw: Redraw, vnode: VNode): Node => {
 const diff = (redraw: Redraw, old: VNode, cur: VNode, index: number = 0): void => {
 
   if(old.type !== cur.type) {
-    ;(<Element>old.node).replaceWith(buildNode(redraw, cur))
+    if(old.node?.nodeType === 11) {
+      let oldChildren = Array.from(<Array<ChildNode>><unknown>old.parent?.childNodes)
+      old.parent && ( old.parent.textContent = '' )
+      let curNode = oldChildren.slice(0, index).concat(<ChildNode>buildNode(redraw, cur), oldChildren.slice(index + old.children.length + 1))
+      for(let i = 0; i < curNode.length; i++) old.parent?.appendChild(curNode[i])
+    }
+    else {
+      ;(<Element>old.node).replaceWith(buildNode(redraw, cur))
+    }
+    cur.parent = old.parent
     return
   }
   else {
