@@ -6,7 +6,7 @@ import {
 import { Component } from './Component'
 
 
-const fragments = (...nodes: Array<any>): VNode => ({
+const fragment = (...nodes: Array<any>): VNode => ({
   __sv__: true,
   type: VNodeType.Fragment,
   item: '',
@@ -40,7 +40,7 @@ const trust = (html: string = ''): VNode => ({
 })
 
 export {
-  fragments,
+  fragment,
   h,
   trust
 }

@@ -1,8 +1,8 @@
-import { fragments, h, trust } from './Hyperscript'
+import { fragment, h, trust } from './Hyperscript'
 import { mount } from './Render'
 
 export {
-  fragments,
+  fragment,
   h,
   mount,
   trust
