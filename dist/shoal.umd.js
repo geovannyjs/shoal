@@ -127,7 +127,7 @@
         return vnode.node;
     };
     const diff = (redraw, old, cur, index = 0) => {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         if (old.type !== cur.type) {
             if (((_a = old.node) === null || _a === void 0 ? void 0 : _a.nodeType) === Type.Fragment) {
                 let oldChildren = Array.from((_b = old.parent) === null || _b === void 0 ? void 0 : _b.childNodes);
@@ -193,9 +193,10 @@
             // old has more children, so remove them
             else if (toDiff < old.children.length) {
                 for (let i = toDiff; i < old.children.length; i++) {
-                    //if(old.node?.nodeType === NodeType.Fragment) old.parent?.removeChild(<Node>old.children[i].node)
-                    //else 
-                    (_f = old.node) === null || _f === void 0 ? void 0 : _f.removeChild(old.children[i].node);
+                    if (((_f = old.node) === null || _f === void 0 ? void 0 : _f.nodeType) === Type.Fragment)
+                        (_g = old.parent) === null || _g === void 0 ? void 0 : _g.removeChild(old.children[i].node);
+                    else
+                        (_h = old.node) === null || _h === void 0 ? void 0 : _h.removeChild(old.children[i].node);
                 }
             }
             // diff the number of children in common

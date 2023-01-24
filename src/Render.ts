@@ -141,9 +141,8 @@ const diff = (redraw: Redraw, old: VNode, cur: VNode, index: number = 0): void =
     // old has more children, so remove them
     else if(toDiff < old.children.length) {
       for(let i = toDiff; i < old.children.length; i++) {
-        //if(old.node?.nodeType === NodeType.Fragment) old.parent?.removeChild(<Node>old.children[i].node)
-        //else 
-          old.node?.removeChild(<Node>old.children[i].node)
+        if(old.node?.nodeType === NodeType.Fragment) old.parent?.removeChild(<Node>old.children[i].node)
+        else old.node?.removeChild(<Node>old.children[i].node)
       }
     }
 
