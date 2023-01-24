@@ -1,6 +1,7 @@
 import { Component } from './Component'
 import { h } from './Hyperscript'
 import { VNode, Type as VNodeType } from './VNode'
+import { Type as NodeType } from './Node'
 
 
 type Redraw = () => void
@@ -75,7 +76,7 @@ const buildNodeText = (redraw: Redraw, vnode: VNode): Node => {
 const diff = (redraw: Redraw, old: VNode, cur: VNode, index: number = 0): void => {
 
   if(old.type !== cur.type) {
-    if(old.node?.nodeType === 11) {
+    if(old.node?.nodeType === NodeType.Fragment) {
       let oldChildren = Array.from(<Array<ChildNode>><unknown>old.parent?.childNodes)
       old.parent && ( old.parent.textContent = '' )
       let curNode = oldChildren.slice(0, index).concat(<ChildNode>buildNode(redraw, cur), oldChildren.slice(index + old.children.length + 1))
@@ -139,7 +140,11 @@ const diff = (redraw: Redraw, old: VNode, cur: VNode, index: number = 0): void =
     }
     // old has more children, so remove them
     else if(toDiff < old.children.length) {
-      for(let i = toDiff; i < old.children.length; i++) old.node?.removeChild(<Node>old.children[i].node)
+      for(let i = toDiff; i < old.children.length; i++) {
+        //if(old.node?.nodeType === NodeType.Fragment) old.parent?.removeChild(<Node>old.children[i].node)
+        //else 
+          old.node?.removeChild(<Node>old.children[i].node)
+      }
     }
 
     // diff the number of children in common
