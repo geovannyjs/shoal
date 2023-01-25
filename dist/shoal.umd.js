@@ -156,7 +156,9 @@
         else {
             // Text
             if (cur.type === Type$1.Text) {
-                old.node.textContent = cur.item;
+                if (old.item != cur.item) {
+                    old.node.textContent = cur.item;
+                }
                 cur.node = old.node;
                 cur.parent = old.parent;
                 return;

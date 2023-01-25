@@ -35,7 +35,7 @@ const diff = (redraw: Redraw, old: VNode, cur: VNode, index: number = 0): void =
   else {
     // Text
     if(cur.type === VNodeType.Text) {
-      ;(<Element>old.node).textContent = <string>cur.item
+      if(<string>old.item != <string>cur.item) { ;(<Element>old.node).textContent = <string>cur.item }
       cur.node = old.node
       cur.parent = old.parent
       return
