@@ -4,8 +4,10 @@ import { h, fragment } from './hyperscript'
 import { VNode } from './VNode'
 import { buildNodeFragment } from './Node'
 
-
 type Redraw = () => void
+type GlobalRef = {
+  redraw: Redraw
+}
 
 const rAF = typeof requestAnimationFrame === 'undefined' ? (fn: Function) => fn() : requestAnimationFrame
 
@@ -16,7 +18,7 @@ const mount = (root: Element) => (component: Component<any>): Redraw => {
   // redraw
   const redraw = () => rAF(() => {
     const vnode = h(component)
-    diff(redraw, oldVNode, vnode)
+    diff({ redraw }, oldVNode, vnode)
     oldVNode = vnode
   })
 
@@ -26,12 +28,12 @@ const mount = (root: Element) => (component: Component<any>): Redraw => {
     const vnode = h(component)
 
     // we start the old vnode as an empty fragment
-    buildNodeFragment(() => null, oldVNode)
+    buildNodeFragment({ redraw }, oldVNode)
     oldVNode.parent = root
 
     root.textContent = ''
 
-    diff(redraw, oldVNode, vnode)
+    diff({ redraw }, oldVNode, vnode)
     oldVNode = vnode
   })
 
@@ -40,6 +42,6 @@ const mount = (root: Element) => (component: Component<any>): Redraw => {
 }
 
 export {
-  Redraw,
+  GlobalRef,
   mount
 }

@@ -83,7 +83,7 @@
                 el.setAttribute(k, v);
         }
     };
-    const buildNode = (redraw, vnode) => {
+    const buildNode = (ref, vnode) => {
         const dispatcher = {
             [Type$1.Component]: buildNodeComponent,
             [Type$1.Fragment]: buildNodeFragment,
@@ -91,53 +91,53 @@
             [Type$1.Tag]: buildNodeTag,
             [Type$1.Text]: buildNodeText
         };
-        return dispatcher[vnode.type](redraw, vnode);
+        return dispatcher[vnode.type](ref, vnode);
     };
-    const buildNodeComponent = (redraw, vnode) => {
-        vnode.instance = vnode.item(vnode.attrs, redraw);
+    const buildNodeComponent = (ref, vnode) => {
+        vnode.instance = vnode.item(vnode.attrs, ref.redraw);
         vnode.children = [vnode.instance.view({ attrs: vnode.attrs, children: vnode.children })];
-        vnode.node = buildNode(redraw, vnode.children[0]);
+        vnode.node = buildNode(ref, vnode.children[0]);
         return vnode.node;
     };
-    const buildNodeFragment = (redraw, vnode) => {
+    const buildNodeFragment = (ref, vnode) => {
         vnode.node = $doc.createDocumentFragment();
         for (let i = 0; i < vnode.children.length; i++) {
-            vnode.node.appendChild(buildNode(redraw, vnode.children[i]));
+            vnode.node.appendChild(buildNode(ref, vnode.children[i]));
             vnode.children[i].parent = vnode.node;
         }
         return vnode.node;
     };
-    const buildNodeRaw = (redraw, vnode) => {
+    const buildNodeRaw = (ref, vnode) => {
         return $doc.createDocumentFragment();
     };
-    const buildNodeTag = (redraw, vnode) => {
+    const buildNodeTag = (ref, vnode) => {
         vnode.node = $doc.createElement(vnode.item);
         // set attrs
         setElementAttrs(vnode.node, vnode.attrs);
         // children
         for (let i = 0; i < vnode.children.length; i++) {
-            vnode.node.appendChild(buildNode(redraw, vnode.children[i]));
+            vnode.node.appendChild(buildNode(ref, vnode.children[i]));
             vnode.children[i].parent = vnode.node;
         }
         return vnode.node;
     };
-    const buildNodeText = (redraw, vnode) => {
+    const buildNodeText = (ref, vnode) => {
         vnode.node = $doc.createTextNode(vnode.item);
         return vnode.node;
     };
 
-    const diff = (redraw, old, cur, index = 0) => {
+    const diff = (ref, old, cur, index = 0) => {
         var _a, _b, _c, _d, _e, _f, _g, _h;
         if (old.type !== cur.type) {
             if (((_a = old.node) === null || _a === void 0 ? void 0 : _a.nodeType) === Type.Fragment) {
                 let oldChildren = Array.from((_b = old.parent) === null || _b === void 0 ? void 0 : _b.childNodes);
                 old.parent && (old.parent.textContent = '');
-                let curNode = oldChildren.slice(0, index).concat(buildNode(redraw, cur), oldChildren.slice(index + old.children.length + 1));
+                let curNode = oldChildren.slice(0, index).concat(buildNode(ref, cur), oldChildren.slice(index + old.children.length + 1));
                 for (let i = 0; i < curNode.length; i++)
                     (_c = old.parent) === null || _c === void 0 ? void 0 : _c.appendChild(curNode[i]);
             }
             else {
-                old.node.replaceWith(buildNode(redraw, cur));
+                old.node.replaceWith(buildNode(ref, cur));
             }
             cur.parent = old.parent;
             return;
@@ -156,7 +156,7 @@
             else if (cur.type === Type$1.Component) {
                 // component is different, so create a new instance
                 if (old.item !== cur.item)
-                    cur.instance = cur.item(cur.attrs, redraw);
+                    cur.instance = cur.item(cur.attrs, ref.redraw);
                 else
                     cur.instance = old.instance;
                 cur.children = cur.instance ? [(_d = cur.instance) === null || _d === void 0 ? void 0 : _d.view({ attrs: cur.attrs, children: cur.children })] : [];
@@ -164,7 +164,7 @@
             // Tag
             else if (cur.type === Type$1.Tag) {
                 if (old.item !== cur.item) {
-                    old.node.replaceWith(buildNodeTag(redraw, cur));
+                    old.node.replaceWith(buildNodeTag(ref, cur));
                     return;
                 }
                 // diff attrs
@@ -188,7 +188,7 @@
             // cur has more children, so insert them
             if (toDiff < cur.children.length) {
                 for (let i = toDiff; i < cur.children.length; i++) {
-                    (_e = old.parent) === null || _e === void 0 ? void 0 : _e.appendChild(buildNode(redraw, cur.children[i]));
+                    (_e = old.parent) === null || _e === void 0 ? void 0 : _e.appendChild(buildNode(ref, cur.children[i]));
                     cur.children[i].parent = old.node;
                 }
             }
@@ -203,7 +203,7 @@
             }
             // diff the number of children in common
             for (let i = 0; i < toDiff; i++)
-                diff(redraw, old.children[i], cur.children[i], i);
+                diff(ref, old.children[i], cur.children[i], i);
             cur.node = old.node;
             cur.parent = old.parent;
         }
@@ -215,17 +215,17 @@
         // redraw
         const redraw = () => rAF(() => {
             const vnode = h(component);
-            diff(redraw, oldVNode, vnode);
+            diff({ redraw }, oldVNode, vnode);
             oldVNode = vnode;
         });
         // first drawn
         rAF(() => {
             const vnode = h(component);
             // we start the old vnode as an empty fragment
-            buildNodeFragment(() => null, oldVNode);
+            buildNodeFragment({ redraw }, oldVNode);
             oldVNode.parent = root;
             root.textContent = '';
-            diff(redraw, oldVNode, vnode);
+            diff({ redraw }, oldVNode, vnode);
             oldVNode = vnode;
         });
         return redraw;

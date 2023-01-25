@@ -1,5 +1,5 @@
 import { Component } from './Component'
-import { Redraw } from './mount'
+import { GlobalRef } from './mount'
 import { VNode, Type as VNodeType } from './VNode'
 
 enum Type {
@@ -31,7 +31,7 @@ const setElementAttrs = (el: Element, attrs: object):void => {
 
 }
 
-const buildNode = (redraw: Redraw, vnode: VNode): Node => {
+const buildNode = (ref: GlobalRef, vnode: VNode): Node => {
   const dispatcher = {
     [VNodeType.Component]: buildNodeComponent,
     [VNodeType.Fragment]: buildNodeFragment,
@@ -39,30 +39,30 @@ const buildNode = (redraw: Redraw, vnode: VNode): Node => {
     [VNodeType.Tag]: buildNodeTag,
     [VNodeType.Text]: buildNodeText
   }
-  return dispatcher[vnode.type](redraw, vnode)
+  return dispatcher[vnode.type](ref, vnode)
 }
 
-const buildNodeComponent = (redraw: Redraw, vnode: VNode): Node => {
-  vnode.instance = (<Component<any>>vnode.item)(vnode.attrs, redraw)
+const buildNodeComponent = (ref: GlobalRef, vnode: VNode): Node => {
+  vnode.instance = (<Component<any>>vnode.item)(vnode.attrs, ref.redraw)
   vnode.children = [vnode.instance.view({ attrs: vnode.attrs, children: vnode.children })]
-  vnode.node = buildNode(redraw, vnode.children[0])
+  vnode.node = buildNode(ref, vnode.children[0])
   return vnode.node
 }
 
-const buildNodeFragment = (redraw: Redraw, vnode: VNode): Node => {
+const buildNodeFragment = (ref: GlobalRef, vnode: VNode): Node => {
   vnode.node = $doc.createDocumentFragment()
   for(let i=0; i < vnode.children.length; i++) {
-    vnode.node.appendChild(buildNode(redraw, vnode.children[i]))
+    vnode.node.appendChild(buildNode(ref, vnode.children[i]))
     vnode.children[i].parent = vnode.node
   }
   return vnode.node
 }
 
-const buildNodeRaw = (redraw: Redraw, vnode: VNode): Node => {
+const buildNodeRaw = (ref: GlobalRef, vnode: VNode): Node => {
   return $doc.createDocumentFragment()
 }
 
-const buildNodeTag = (redraw: Redraw, vnode: VNode): Node => {
+const buildNodeTag = (ref: GlobalRef, vnode: VNode): Node => {
   vnode.node = $doc.createElement(<string>vnode.item)
 
   // set attrs
@@ -70,13 +70,13 @@ const buildNodeTag = (redraw: Redraw, vnode: VNode): Node => {
 
   // children
   for(let i=0; i < vnode.children.length; i++) {
-    vnode.node.appendChild(buildNode(redraw, vnode.children[i]))
+    vnode.node.appendChild(buildNode(ref, vnode.children[i]))
     vnode.children[i].parent = vnode.node
   }
   return <Element>vnode.node
 }
 
-const buildNodeText = (redraw: Redraw, vnode: VNode): Node => {
+const buildNodeText = (ref: GlobalRef, vnode: VNode): Node => {
   vnode.node = $doc.createTextNode(<string>vnode.item)
   return vnode.node
 }

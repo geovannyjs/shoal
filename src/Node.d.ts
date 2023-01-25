@@ -1,4 +1,4 @@
-import { Redraw } from './mount';
+import { GlobalRef } from './mount';
 import { VNode } from './VNode';
 declare enum Type {
     Element = 1,
@@ -12,7 +12,7 @@ declare enum Type {
     Fragment = 11
 }
 declare const setElementAttrs: (el: Element, attrs: object) => void;
-declare const buildNode: (redraw: Redraw, vnode: VNode) => Node;
-declare const buildNodeFragment: (redraw: Redraw, vnode: VNode) => Node;
-declare const buildNodeTag: (redraw: Redraw, vnode: VNode) => Node;
+declare const buildNode: (ref: GlobalRef, vnode: VNode) => Node;
+declare const buildNodeFragment: (ref: GlobalRef, vnode: VNode) => Node;
+declare const buildNodeTag: (ref: GlobalRef, vnode: VNode) => Node;
 export { Type, buildNode, buildNodeFragment, buildNodeTag, setElementAttrs };

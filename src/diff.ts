@@ -1,20 +1,20 @@
 import { Component } from './Component'
-import { Redraw } from './mount'
+import { GlobalRef } from './mount'
 import { VNode, Type as VNodeType } from './VNode'
 import { Type as NodeType, buildNode, buildNodeTag, setElementAttrs } from './Node'
 
 
-const diff = (redraw: Redraw, old: VNode, cur: VNode, index: number = 0): void => {
+const diff = (ref: GlobalRef, old: VNode, cur: VNode, index: number = 0): void => {
 
   if(old.type !== cur.type) {
     if(old.node?.nodeType === NodeType.Fragment) {
       let oldChildren = Array.from(<Array<ChildNode>><unknown>old.parent?.childNodes)
       old.parent && ( old.parent.textContent = '' )
-      let curNode = oldChildren.slice(0, index).concat(<ChildNode>buildNode(redraw, cur), oldChildren.slice(index + old.children.length + 1))
+      let curNode = oldChildren.slice(0, index).concat(<ChildNode>buildNode(ref, cur), oldChildren.slice(index + old.children.length + 1))
       for(let i = 0; i < curNode.length; i++) old.parent?.appendChild(curNode[i])
     }
     else {
-      ;(<Element>old.node).replaceWith(buildNode(redraw, cur))
+      ;(<Element>old.node).replaceWith(buildNode(ref, cur))
     }
     cur.parent = old.parent
     return
@@ -32,7 +32,7 @@ const diff = (redraw: Redraw, old: VNode, cur: VNode, index: number = 0): void =
     else if(cur.type === VNodeType.Component) {
 
       // component is different, so create a new instance
-      if(old.item !== cur.item) cur.instance = (<Component<any>>cur.item)(cur.attrs, redraw)
+      if(old.item !== cur.item) cur.instance = (<Component<any>>cur.item)(cur.attrs, ref.redraw)
       else cur.instance = old.instance
 
       cur.children = cur.instance ? [cur.instance?.view({ attrs: cur.attrs, children: cur.children })] : []
@@ -41,7 +41,7 @@ const diff = (redraw: Redraw, old: VNode, cur: VNode, index: number = 0): void =
     // Tag
     else if(cur.type === VNodeType.Tag) {
       if(old.item !== cur.item) { 
-        (<Element>old.node).replaceWith(buildNodeTag(redraw, cur))
+        (<Element>old.node).replaceWith(buildNodeTag(ref, cur))
         return
       }
       // diff attrs
@@ -65,7 +65,7 @@ const diff = (redraw: Redraw, old: VNode, cur: VNode, index: number = 0): void =
     // cur has more children, so insert them
     if(toDiff < cur.children.length) {
       for(let i = toDiff; i < cur.children.length; i++) {
-        old.parent?.appendChild(buildNode(redraw, cur.children[i]))
+        old.parent?.appendChild(buildNode(ref, cur.children[i]))
         cur.children[i].parent = old.node
       }
     }
@@ -78,7 +78,7 @@ const diff = (redraw: Redraw, old: VNode, cur: VNode, index: number = 0): void =
     }
 
     // diff the number of children in common
-    for(let i=0; i < toDiff; i++) diff(redraw, old.children[i], cur.children[i], i)
+    for(let i=0; i < toDiff; i++) diff(ref, old.children[i], cur.children[i], i)
     cur.node = old.node
     cur.parent = old.parent
 
