@@ -222,7 +222,7 @@
 
     const rAF = typeof requestAnimationFrame === 'undefined' ? (fn) => fn() : requestAnimationFrame;
     const mount = (root) => (component) => {
-        let oldVNode;
+        let oldVNode = fragment();
         // redraw
         const redraw = () => rAF(() => {
             const vnode = h(component);
@@ -232,9 +232,10 @@
         // first drawn
         rAF(() => {
             const vnode = h(component);
+            buildNodeFragment(() => null, oldVNode);
+            oldVNode.parent = root;
             root.textContent = '';
-            root.appendChild(buildNode(redraw, vnode));
-            vnode.parent = root;
+            diff(redraw, oldVNode, vnode);
             oldVNode = vnode;
         });
         return redraw;

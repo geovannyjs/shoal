@@ -1,8 +1,8 @@
 import { Component } from './Component'
 import { diff } from './diff'
-import { h } from './hyperscript'
+import { h, fragment } from './hyperscript'
 import { VNode } from './VNode'
-import { buildNode } from './Node'
+import { buildNodeFragment } from './Node'
 
 
 type Redraw = () => void
@@ -11,7 +11,7 @@ const rAF = typeof requestAnimationFrame === 'undefined' ? (fn: Function) => fn(
 
 const mount = (root: Element) => (component: Component<any>): Redraw => {
 
-  let oldVNode: VNode
+  let oldVNode: VNode = fragment()
 
   // redraw
   const redraw = () => rAF(() => {
@@ -24,9 +24,14 @@ const mount = (root: Element) => (component: Component<any>): Redraw => {
   // first drawn
   rAF(() => {
     const vnode = h(component)
+
+    // we start the old vnode as an empty fragment
+    buildNodeFragment(() => null, oldVNode)
+    oldVNode.parent = root
+
     root.textContent = ''
-    root.appendChild(buildNode(redraw, vnode))
-    vnode.parent = root
+
+    diff(redraw, oldVNode, vnode)
     oldVNode = vnode
   })
 

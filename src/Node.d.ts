@@ -12,5 +12,6 @@ declare enum Type {
     Fragment = 11
 }
 declare const buildNode: (redraw: Redraw, vnode: VNode) => Node;
+declare const buildNodeFragment: (redraw: Redraw, vnode: VNode) => Node;
 declare const buildNodeTag: (redraw: Redraw, vnode: VNode) => Node;
-export { Type, buildNode, buildNodeTag };
+export { Type, buildNode, buildNodeFragment, buildNodeTag };

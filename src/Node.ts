@@ -84,5 +84,6 @@ const buildNodeText = (redraw: Redraw, vnode: VNode): Node => {
 export { 
   Type,
   buildNode,
+  buildNodeFragment,
   buildNodeTag
 }
