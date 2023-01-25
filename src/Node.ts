@@ -85,5 +85,6 @@ export {
   Type,
   buildNode,
   buildNodeFragment,
-  buildNodeTag
+  buildNodeTag,
+  setElementAttrs
 }

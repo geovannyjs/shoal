@@ -1,21 +1,8 @@
 import { Component } from './Component'
 import { Redraw } from './mount'
 import { VNode, Type as VNodeType } from './VNode'
-import { Type as NodeType, buildNode, buildNodeTag } from './Node'
+import { Type as NodeType, buildNode, buildNodeTag, setElementAttrs } from './Node'
 
-
-const setElementAttrs = (el: Element, attrs: object):void => {
-
-  type ObjectKey = keyof typeof attrs
-  const keys = Object.keys(attrs)
-  for(let i=0; i < keys.length; i++) {
-    let k = keys[i]
-    let v = attrs[k as ObjectKey]
-    if (k.slice(0, 2) === 'on') el.addEventListener(k.slice(2), v)
-    else el.setAttribute(k, v) 
-  }
-
-}
 
 const diff = (redraw: Redraw, old: VNode, cur: VNode, index: number = 0): void => {
 

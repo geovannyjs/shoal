@@ -72,7 +72,7 @@
     // FIXME it would be good to accept document as a param
     // so it would be possible to use something like jsdom
     const $doc = window.document;
-    const setElementAttrs$1 = (el, attrs) => {
+    const setElementAttrs = (el, attrs) => {
         const keys = Object.keys(attrs);
         for (let i = 0; i < keys.length; i++) {
             let k = keys[i];
@@ -113,7 +113,7 @@
     const buildNodeTag = (redraw, vnode) => {
         vnode.node = $doc.createElement(vnode.item);
         // set attrs
-        setElementAttrs$1(vnode.node, vnode.attrs);
+        setElementAttrs(vnode.node, vnode.attrs);
         // children
         for (let i = 0; i < vnode.children.length; i++) {
             vnode.node.appendChild(buildNode(redraw, vnode.children[i]));
@@ -126,17 +126,6 @@
         return vnode.node;
     };
 
-    const setElementAttrs = (el, attrs) => {
-        const keys = Object.keys(attrs);
-        for (let i = 0; i < keys.length; i++) {
-            let k = keys[i];
-            let v = attrs[k];
-            if (k.slice(0, 2) === 'on')
-                el.addEventListener(k.slice(2), v);
-            else
-                el.setAttribute(k, v);
-        }
-    };
     const diff = (redraw, old, cur, index = 0) => {
         var _a, _b, _c, _d, _e, _f, _g, _h;
         if (old.type !== cur.type) {
@@ -232,6 +221,7 @@
         // first drawn
         rAF(() => {
             const vnode = h(component);
+            // we start the old vnode as an empty fragment
             buildNodeFragment(() => null, oldVNode);
             oldVNode.parent = root;
             root.textContent = '';

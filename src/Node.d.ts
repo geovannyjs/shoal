@@ -11,7 +11,8 @@ declare enum Type {
     DocumentType = 10,
     Fragment = 11
 }
+declare const setElementAttrs: (el: Element, attrs: object) => void;
 declare const buildNode: (redraw: Redraw, vnode: VNode) => Node;
 declare const buildNodeFragment: (redraw: Redraw, vnode: VNode) => Node;
 declare const buildNodeTag: (redraw: Redraw, vnode: VNode) => Node;
-export { Type, buildNode, buildNodeFragment, buildNodeTag };
+export { Type, buildNode, buildNodeFragment, buildNodeTag, setElementAttrs };
