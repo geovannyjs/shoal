@@ -1,3 +1,5 @@
+import { Redraw } from './mount';
+import { VNode } from './VNode';
 declare enum Type {
     Element = 1,
     Attribute = 2,
@@ -9,4 +11,6 @@ declare enum Type {
     DocumentType = 10,
     Fragment = 11
 }
-export { Type };
+declare const buildNode: (redraw: Redraw, vnode: VNode) => Node;
+declare const buildNodeTag: (redraw: Redraw, vnode: VNode) => Node;
+export { Type, buildNode, buildNodeTag };

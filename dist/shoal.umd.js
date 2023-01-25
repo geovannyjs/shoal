@@ -69,11 +69,10 @@
         Type[Type["DocumentType"] = 10] = "DocumentType";
         Type[Type["Fragment"] = 11] = "Fragment";
     })(Type || (Type = {}));
-
     // FIXME it would be good to accept document as a param
     // so it would be possible to use something like jsdom
     const $doc = window.document;
-    const setElementAttrs = (el, attrs) => {
+    const setElementAttrs$1 = (el, attrs) => {
         const keys = Object.keys(attrs);
         for (let i = 0; i < keys.length; i++) {
             let k = keys[i];
@@ -114,7 +113,7 @@
     const buildNodeTag = (redraw, vnode) => {
         vnode.node = $doc.createElement(vnode.item);
         // set attrs
-        setElementAttrs(vnode.node, vnode.attrs);
+        setElementAttrs$1(vnode.node, vnode.attrs);
         // children
         for (let i = 0; i < vnode.children.length; i++) {
             vnode.node.appendChild(buildNode(redraw, vnode.children[i]));
@@ -125,6 +124,18 @@
     const buildNodeText = (redraw, vnode) => {
         vnode.node = $doc.createTextNode(vnode.item);
         return vnode.node;
+    };
+
+    const setElementAttrs = (el, attrs) => {
+        const keys = Object.keys(attrs);
+        for (let i = 0; i < keys.length; i++) {
+            let k = keys[i];
+            let v = attrs[k];
+            if (k.slice(0, 2) === 'on')
+                el.addEventListener(k.slice(2), v);
+            else
+                el.setAttribute(k, v);
+        }
     };
     const diff = (redraw, old, cur, index = 0) => {
         var _a, _b, _c, _d, _e, _f, _g, _h;
