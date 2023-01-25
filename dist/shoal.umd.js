@@ -217,6 +217,7 @@
             cur.parent = old.parent;
         }
     };
+
     const rAF = typeof requestAnimationFrame === 'undefined' ? (fn) => fn() : requestAnimationFrame;
     const mount = (root) => (component) => {
         let oldVNode;
